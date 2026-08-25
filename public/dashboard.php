@@ -760,6 +760,10 @@
         }
         .powered-footer .name { color: #00ff88; font-weight: 600; }
 
+        /* ============================================================
+           SIDE PANEL
+           ============================================================ */
+
         .side-panel-overlay {
             display: none;
             position: fixed;
@@ -910,12 +914,111 @@
         .side-panel .panel-body .screen-container .screen-placeholder .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
         .side-panel .panel-body .screen-container .screen-placeholder .sub { font-size: 11px; color: #334155; }
 
+        /* ---- TERMINAL / COMMAND PROMPT ---- */
+        .side-panel .panel-body .terminal-container {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .side-panel .panel-body .terminal-container .terminal-header {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 10px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .side-panel .panel-body .terminal-container .terminal-header .term-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .side-panel .panel-body .terminal-container .terminal-header .term-dots .red { background: #f43f5e; }
+        .side-panel .panel-body .terminal-container .terminal-header .term-dots .yellow { background: #fbbf24; }
+        .side-panel .panel-body .terminal-container .terminal-header .term-dots .green { background: #00ff88; }
+
+        .side-panel .panel-body .terminal-container .terminal-output {
+            padding: 8px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 11px;
+            color: #e2e8f0;
+            min-height: 60px;
+            background: rgba(0,0,0,0.2);
+        }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line {
+            padding: 1px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .prompt {
+            color: #00ff88;
+            font-weight: 500;
+        }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .cmd { color: #f1f5f9; }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .output { color: #94a3b8; }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .error { color: #f43f5e; }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .success { color: #00ff88; }
+
+        .side-panel .panel-body .terminal-container .terminal-input-wrap {
+            display: flex;
+            align-items: center;
+            padding: 4px 12px 8px 12px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            gap: 6px;
+        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap .prompt-symbol {
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 12px;
+            font-family: monospace;
+            flex-shrink: 0;
+        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 12px;
+            outline: none;
+            padding: 4px 0;
+        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap input::placeholder {
+            color: #334155;
+        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send {
+            background: none;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px 6px;
+            transition: 0.2s;
+        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send:hover {
+            color: #66ffaa;
+            transform: scale(1.1);
+        }
+
+        /* ---- LOG CONTAINER ---- */
         .side-panel .panel-body .log-container {
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 10px;
             padding: 10px 12px;
-            max-height: 200px;
+            max-height: 120px;
             overflow-y: auto;
             font-family: 'Cascadia Code', 'Consolas', monospace;
             font-size: 10px;
@@ -943,6 +1046,15 @@
             vertical-align: middle;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .side-panel .panel-body .uninstall-btn {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: #f43f5e;
+            color: #f43f5e;
+        }
+        .side-panel .panel-body .uninstall-btn:hover {
+            background: rgba(244, 63, 94, 0.2);
+        }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -1051,7 +1163,7 @@
             <button class="close-panel" onclick="closePanel()">✕</button>
         </div>
         <div class="panel-body" id="panelBody">
-            <!-- Populated by JavaScript -->
+            <div style="text-align:center;color:#64748b;padding:40px 0;">Select a client to view details</div>
         </div>
     </div>
 
@@ -1284,6 +1396,8 @@
         let currentFilter = 'all';
         let selectedClient = null;
         let panelLogs = [];
+        let termHistory = [];
+        let termIndex = -1;
 
         // ============================================================
         // HELPERS
@@ -1340,7 +1454,7 @@
             const container = document.getElementById('panelLogContainer');
             if (!container) return;
             if (panelLogs.length === 0) {
-                container.innerHTML = '<div class="log-entry"><span class="time">[System]</span> <span class="type info">No logs yet</span></div>';
+                container.innerHTML = '<div class="log-entry"><span class="time">[System]</span> <span class="type info">Ready</span></div>';
                 return;
             }
             let html = '';
@@ -1663,6 +1777,8 @@
 
             selectedClient = client;
             panelLogs = [];
+            termHistory = [];
+            termIndex = -1;
             document.getElementById('sidePanel').classList.add('open');
             document.getElementById('sidePanelOverlay').classList.add('active');
             document.getElementById('mainContent').classList.add('shifted');
@@ -1739,7 +1855,7 @@
                         <span class="icon">🏓</span> Ping
                     </button>
                     <button class="btn-sm primary" onclick="panelDeployScreenConnect('${client.clientId}')">
-                        <span class="icon">📤</span> Deploy ScreenConnect
+                        <span class="icon">📤</span> Deploy SC
                     </button>
                     ${hasSc ? `<button class="btn-sm blue" onclick="panelViewScreen('${client.clientId}')">
                         <span class="icon">🖥️</span> View Screen
@@ -1775,9 +1891,179 @@
                 <div class="log-container" id="panelLogContainer">
                     <div class="log-entry"><span class="time">[System]</span> <span class="type info">Ready</span></div>
                 </div>
+
+                <div class="section-title">💻 Command Prompt</div>
+                <div class="terminal-container" id="terminalContainer">
+                    <div class="terminal-header">
+                        <span>⚡ Terminal</span>
+                        <div class="term-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput">
+                        <div class="term-line">
+                            <span class="prompt">$</span>
+                            <span class="cmd">type any command...</span>
+                        </div>
+                    </div>
+                    <div class="terminal-input-wrap">
+                        <span class="prompt-symbol">$</span>
+                        <input type="text" id="termInput" placeholder="Enter command..." autofocus />
+                        <button class="term-send" onclick="sendTermCommand()">▶</button>
+                    </div>
+                </div>
             `;
 
             renderPanelLogs();
+
+            // Focus terminal input
+            setTimeout(() => {
+                const input = document.getElementById('termInput');
+                if (input) input.focus();
+            }, 100);
+
+            // Terminal enter key handler
+            const termInput = document.getElementById('termInput');
+            if (termInput) {
+                termInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        sendTermCommand();
+                    }
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        if (termIndex < termHistory.length - 1) {
+                            termIndex++;
+                            this.value = termHistory[termHistory.length - 1 - termIndex] || '';
+                        }
+                    }
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        if (termIndex > 0) {
+                            termIndex--;
+                            this.value = termHistory[termHistory.length - 1 - termIndex] || '';
+                        } else {
+                            termIndex = -1;
+                            this.value = '';
+                        }
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        // TERMINAL FUNCTION
+        // ============================================================
+
+        async function sendTermCommand() {
+            const input = document.getElementById('termInput');
+            const output = document.getElementById('terminalOutput');
+            const command = input.value.trim();
+
+            if (!command || !selectedClient) {
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            // Add to history
+            termHistory.push(command);
+            termIndex = -1;
+
+            // Display command in terminal
+            const line = document.createElement('div');
+            line.className = 'term-line';
+            line.innerHTML = `<span class="prompt">$</span> <span class="cmd">${command}</span>`;
+            output.appendChild(line);
+
+            // Clear input
+            input.value = '';
+            input.focus();
+
+            // Add "running" indicator
+            const runningLine = document.createElement('div');
+            runningLine.className = 'term-line';
+            runningLine.innerHTML = `<span class="output" style="color:#3b82f6;">⏳ Executing...</span>`;
+            output.appendChild(runningLine);
+            output.scrollTop = output.scrollHeight;
+
+            try {
+                const res = await fetch(`/api/rmm/command/${selectedClient.clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: command })
+                });
+                const data = await res.json();
+
+                // Remove running line
+                output.removeChild(runningLine);
+
+                if (data.status === 'ok') {
+                    // Add "Command sent" line
+                    const sentLine = document.createElement('div');
+                    sentLine.className = 'term-line';
+                    sentLine.innerHTML = `<span class="output success">✅ Command sent. Waiting for response...</span>`;
+                    output.appendChild(sentLine);
+                    output.scrollTop = output.scrollHeight;
+
+                    // Wait for response by polling
+                    let attempts = 0;
+                    const maxAttempts = 15;
+                    const checkInterval = setInterval(async () => {
+                        attempts++;
+                        try {
+                            const respRes = await fetch(`/api/rmm/client/${selectedClient.clientId}`);
+                            const clientData = await respRes.json();
+                            const lastCmd = clientData.commands && clientData.commands.length > 0 ?
+                                clientData.commands[clientData.commands.length - 1] : null;
+
+                            if (lastCmd && lastCmd.id === data.commandId) {
+                                clearInterval(checkInterval);
+                                const resultLine = document.createElement('div');
+                                resultLine.className = 'term-line';
+                                if (lastCmd.status === 'completed' || lastCmd.status === 'success') {
+                                    resultLine.innerHTML = `<span class="output success">✅ ${lastCmd.result || 'Command completed'}</span>`;
+                                } else if (lastCmd.status === 'failed') {
+                                    resultLine.innerHTML = `<span class="output error">❌ ${lastCmd.result || 'Command failed'}</span>`;
+                                } else {
+                                    resultLine.innerHTML = `<span class="output">${lastCmd.result || 'Command completed'}</span>`;
+                                }
+                                output.appendChild(resultLine);
+                                output.scrollTop = output.scrollHeight;
+                                addPanelLog(`✅ Command: ${command}`, 'success');
+                                return;
+                            }
+                        } catch (e) {}
+
+                        if (attempts >= maxAttempts) {
+                            clearInterval(checkInterval);
+                            const timeoutLine = document.createElement('div');
+                            timeoutLine.className = 'term-line';
+                            timeoutLine.innerHTML = `<span class="output error">⚠️ Response timeout. Check client log.</span>`;
+                            output.appendChild(timeoutLine);
+                            output.scrollTop = output.scrollHeight;
+                            addPanelLog(`⚠️ Command timed out: ${command}`, 'warning');
+                        }
+                    }, 1000);
+                } else {
+                    const errorLine = document.createElement('div');
+                    errorLine.className = 'term-line';
+                    errorLine.innerHTML = `<span class="output error">❌ Failed: ${data.message}</span>`;
+                    output.appendChild(errorLine);
+                    output.scrollTop = output.scrollHeight;
+                    addPanelLog(`❌ Command failed: ${command}`, 'error');
+                }
+            } catch (e) {
+                output.removeChild(runningLine);
+                const errorLine = document.createElement('div');
+                errorLine.className = 'term-line';
+                errorLine.innerHTML = `<span class="output error">❌ Error: ${e.message}</span>`;
+                output.appendChild(errorLine);
+                output.scrollTop = output.scrollHeight;
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
+            }
         }
 
         // ============================================================
@@ -1802,7 +2088,7 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addPanelLog(`✅ "${command}" sent successfully`, 'success');
+                    addPanelLog(`✅ "${command}" sent`, 'success');
                     showToast(`✅ Command sent: ${command}`, 'success');
                     setTimeout(() => fetchRmmClients(), 2000);
                 } else {
@@ -1846,7 +2132,7 @@
                 const data = await res.json();
 
                 if (data.status === 'ok') {
-                    addPanelLog('✅ ScreenConnect deployed successfully', 'success');
+                    addPanelLog('✅ ScreenConnect deployed', 'success');
                     showToast('✅ ScreenConnect deployed', 'success');
                     setTimeout(() => {
                         fetchRmmClients();
@@ -1884,17 +2170,17 @@
 
                 if (!viewerUrl || viewerUrl === '') {
                     showToast('⚠️ Please set ScreenConnect Viewer URL in Settings', 'warning');
-                    addPanelLog('⚠️ Viewer URL not configured — go to Settings', 'warning');
+                    addPanelLog('⚠️ Viewer URL not configured', 'warning');
                     openSettings();
                     return;
                 }
 
                 const fullUrl = viewerUrl.replace(/\/+$/, '') + '/' + client.screenconnectId;
                 window.open(fullUrl, '_blank');
-                addPanelLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
-                showToast('🖥️ ScreenConnect viewer opened', 'success');
+                addPanelLog(`🖥️ Viewer opened for ${client.pcName}`, 'info');
+                showToast('🖥️ Viewer opened', 'success');
             } catch (e) {
-                addPanelLog(`❌ Error getting viewer URL: ${e.message}`, 'error');
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
                 showToast('❌ Error opening viewer', 'error');
             }
         }
@@ -1903,6 +2189,20 @@
             if (!confirm('⚠️ This will uninstall the RMM agent. Are you sure?')) return;
             addPanelLog('🗑️ Uninstalling RMM agent...', 'warning');
 
+            // Show uninstall progress in terminal
+            const output = document.getElementById('terminalOutput');
+            if (output) {
+                const line = document.createElement('div');
+                line.className = 'term-line';
+                line.innerHTML = `<span class="prompt">$</span> <span class="cmd">uninstall-rmm</span>`;
+                output.appendChild(line);
+                const statusLine = document.createElement('div');
+                statusLine.className = 'term-line';
+                statusLine.innerHTML = `<span class="output" style="color:#fbbf24;">⏳ Uninstalling...</span>`;
+                output.appendChild(statusLine);
+                output.scrollTop = output.scrollHeight;
+            }
+
             try {
                 const res = await fetch(`/api/rmm/uninstall/${clientId}`, {
                     method: 'POST',
@@ -1910,8 +2210,14 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addPanelLog('✅ RMM agent uninstalled', 'success');
+                    addPanelLog('✅ RMM uninstalled', 'success');
                     showToast('✅ Uninstall sent', 'success');
+                    if (output) {
+                        const statusLine = output.querySelector('.term-line:last-child');
+                        if (statusLine) {
+                            statusLine.innerHTML = `<span class="output success">✅ Uninstall command sent</span>`;
+                        }
+                    }
                     setTimeout(() => {
                         fetchRmmClients();
                         closePanel();
@@ -1935,7 +2241,7 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addPanelLog('🗑️ Client deleted from dashboard', 'info');
+                    addPanelLog('🗑️ Client deleted', 'info');
                     showToast('✅ Client deleted', 'success');
                     fetchRmmClients();
                     closePanel();
@@ -2175,6 +2481,24 @@
                 closeSettings();
                 hideLogoutConfirm();
                 hideCustomConfirm();
+            }
+            // Global terminal focus shortcut (Ctrl+Shift+T)
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                const termInput = document.getElementById('termInput');
+                if (termInput) {
+                    termInput.focus();
+                    termInput.select();
+                }
+            }
+        });
+
+        // Click outside terminal to focus
+        document.addEventListener('click', function(e) {
+            const terminal = document.getElementById('terminalContainer');
+            if (terminal && terminal.contains(e.target)) {
+                const input = document.getElementById('termInput');
+                if (input) input.focus();
             }
         });
 
