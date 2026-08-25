@@ -640,12 +640,14 @@
         .toast.error { border-color: #f43f5e; color: #f43f5e; }
         .toast.warning { border-color: #fbbf24; color: #fbbf24; }
 
+        /* ---- MODERN GLASS MODAL ---- */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 1000;
             padding: 20px;
             overflow-y: auto;
@@ -655,30 +657,133 @@
         .modal-overlay.active { display: flex; }
 
         .modal-box {
-            background: linear-gradient(145deg, #111827, #0f1626);
+            background: rgba(15, 22, 38, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             max-width: 480px;
             width: 100%;
-            border-radius: 16px;
-            padding: 28px 24px 24px;
+            border-radius: 20px;
+            padding: 32px 28px 28px;
             border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
-            animation: modalIn 0.3s ease;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+            animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes modalIn { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            opacity: 0.6;
+        }
+        @keyframes modalIn { 0% { opacity: 0; transform: scale(0.92) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .modal-box .close {
-            float: right;
+        .modal-box .modal-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .modal-box h2 {
+            color: #f1f5f9;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .modal-box p {
+            color: #94a3b8;
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-box .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 10px 16px;
+            font-size: 13px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+        .modal-box .modal-actions .btn:hover {
+            border-color: rgba(255,255,255,0.12);
+            color: #e2e8f0;
+            transform: translateY(-1px);
+        }
+        .modal-box .modal-actions .btn.cancel {
+            border-color: rgba(255,255,255,0.06);
+            color: #94a3b8;
+        }
+        .modal-box .modal-actions .btn.cancel:hover {
+            border-color: rgba(255,255,255,0.12);
+            color: #e2e8f0;
+            background: rgba(255,255,255,0.04);
+        }
+        .modal-box .modal-actions .btn.confirm {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+        .modal-box .modal-actions .btn.confirm:hover {
+            background: rgba(0, 255, 136, 0.08);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.05);
+        }
+        .modal-box .modal-actions .btn.danger {
+            border-color: #f43f5e;
+            color: #f43f5e;
+        }
+        .modal-box .modal-actions .btn.danger:hover {
+            background: rgba(244, 63, 94, 0.08);
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.05);
+        }
+        .modal-box .modal-actions .btn.violet {
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+        .modal-box .modal-actions .btn.violet:hover {
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .modal-box .modal-actions .btn.gold {
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+        .modal-box .modal-actions .btn.gold:hover {
+            background: rgba(251, 191, 36, 0.08);
+        }
+        .modal-box .modal-actions .btn.blue {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .modal-box .modal-actions .btn.blue:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .modal-box .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
             background: none;
             border: none;
             color: #475569;
             font-size: 20px;
             cursor: pointer;
             transition: 0.2s;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
-        .modal-box .close:hover { color: #e2e8f0; }
+        .modal-box .close-btn:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
 
-        .modal-box h2 { color: #f1f5f9; font-size: 19px; font-weight: 700; margin-bottom: 6px; }
-        .modal-box p { color: #64748b; font-size: 13px; margin-bottom: 18px; }
         .modal-box .form-group { margin-bottom: 14px; }
         .modal-box .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 3px; font-weight: 500; }
         .modal-box .form-group input {
@@ -699,15 +804,6 @@
         .modal-box .form-group .error-text.show { display: block; }
         .modal-box .form-group .help-text { font-size: 10px; color: #475569; margin-top: 2px; }
         .modal-box .form-group .help-text a { color: #00ff88; }
-
-        .modal-box .btn-group { display: flex; gap: 10px; margin-top: 6px; }
-        .modal-box .btn-group .btn { flex: 1; justify-content: center; padding: 8px 14px; font-size: 13px; border-radius: 8px; }
-        .modal-box .btn-group .btn.cancel { border-color: rgba(255,255,255,0.06); color: #94a3b8; background: transparent; }
-        .modal-box .btn-group .btn.cancel:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
-        .modal-box .btn-group .btn.confirm { border-color: #00ff88; color: #00ff88; background: transparent; }
-        .modal-box .btn-group .btn.confirm:hover { background: rgba(0, 255, 136, 0.08); }
-        .modal-box .btn-group .btn.danger-confirm { border-color: #f43f5e; color: #f43f5e; background: transparent; }
-        .modal-box .btn-group .btn.danger-confirm:hover { background: rgba(244, 63, 94, 0.08); }
 
         .modal-box .info-text {
             font-size: 10px;
@@ -760,10 +856,7 @@
         }
         .powered-footer .name { color: #00ff88; font-weight: 600; }
 
-        /* ============================================================
-           SIDE PANEL
-           ============================================================ */
-
+        /* ---- SIDE PANEL ---- */
         .side-panel-overlay {
             display: none;
             position: fixed;
@@ -908,13 +1001,10 @@
             font-size: 13px;
             position: relative;
         }
-        .side-panel .panel-body .screen-container .screen-placeholder {
-            text-align: center;
-        }
+        .side-panel .panel-body .screen-container .screen-placeholder { text-align: center; }
         .side-panel .panel-body .screen-container .screen-placeholder .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
         .side-panel .panel-body .screen-container .screen-placeholder .sub { font-size: 11px; color: #334155; }
 
-        /* ---- TERMINAL / COMMAND PROMPT ---- */
         .side-panel .panel-body .terminal-container {
             background: rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.04);
@@ -962,10 +1052,7 @@
             word-break: break-all;
             white-space: pre-wrap;
         }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .prompt {
-            color: #00ff88;
-            font-weight: 500;
-        }
+        .side-panel .panel-body .terminal-container .terminal-output .term-line .prompt { color: #00ff88; font-weight: 500; }
         .side-panel .panel-body .terminal-container .terminal-output .term-line .cmd { color: #f1f5f9; }
         .side-panel .panel-body .terminal-container .terminal-output .term-line .output { color: #94a3b8; }
         .side-panel .panel-body .terminal-container .terminal-output .term-line .error { color: #f43f5e; }
@@ -995,9 +1082,7 @@
             outline: none;
             padding: 4px 0;
         }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap input::placeholder {
-            color: #334155;
-        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap input::placeholder { color: #334155; }
         .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send {
             background: none;
             border: none;
@@ -1007,12 +1092,8 @@
             padding: 2px 6px;
             transition: 0.2s;
         }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send:hover {
-            color: #66ffaa;
-            transform: scale(1.1);
-        }
+        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send:hover { color: #66ffaa; transform: scale(1.1); }
 
-        /* ---- LOG CONTAINER ---- */
         .side-panel .panel-body .log-container {
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.04);
@@ -1047,15 +1128,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .side-panel .panel-body .uninstall-btn {
-            background: rgba(244, 63, 94, 0.1);
-            border-color: #f43f5e;
-            color: #f43f5e;
-        }
-        .side-panel .panel-body .uninstall-btn:hover {
-            background: rgba(244, 63, 94, 0.2);
-        }
-
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -1078,8 +1150,8 @@
             .filter-bar { flex-direction: column; align-items: stretch; }
             .filter-bar .filter-group { flex-wrap: wrap; }
             .filter-bar .filter-group input { min-width: 100%; }
-            .modal-box { padding: 20px 16px; }
-            .modal-box .btn-group { flex-direction: column; }
+            .modal-box { padding: 24px 16px; }
+            .modal-box .modal-actions { flex-direction: column; }
             .side-panel {
                 width: 100%;
                 right: -100%;
@@ -1282,12 +1354,12 @@
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsOverlay">
         <div class="modal-box">
-            <button class="close" onclick="closeSettings()">✕</button>
+            <button class="close-btn" onclick="closeSettings()">✕</button>
             <h2>⚙️ Settings</h2>
             <p>Configure your RMM deployment settings.</p>
 
             <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
-                <div class="section-title">📤 ScreenConnect Installer</div>
+                <div class="section-title" style="font-size:11px;color:#94a3b8;font-weight:600;margin-bottom:8px;">📤 ScreenConnect Installer</div>
                 <div class="form-group">
                     <label>Upload MSI/EXE Installer</label>
                     <div id="uploadStatus" style="font-size:11px;color:#64748b;margin-bottom:6px;">
@@ -1303,7 +1375,7 @@
             </div>
 
             <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
-                <div class="section-title">🖥️ ScreenConnect Viewer</div>
+                <div class="section-title" style="font-size:11px;color:#94a3b8;font-weight:600;margin-bottom:8px;">🖥️ ScreenConnect Viewer</div>
                 <div class="form-group">
                     <label>Viewer URL</label>
                     <input type="text" id="scViewerUrl" placeholder="https://your-screenconnect.com/Viewer/" />
@@ -1313,7 +1385,7 @@
             </div>
 
             <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
-                <div class="section-title">🔒 Change Password</div>
+                <div class="section-title" style="font-size:11px;color:#94a3b8;font-weight:600;margin-bottom:8px;">🔒 Change Password</div>
                 <div class="form-group">
                     <label>Current Password</label>
                     <input type="password" id="oldPassword" placeholder="Current password" />
@@ -1333,7 +1405,7 @@
             </div>
 
             <div>
-                <div class="section-title">🤖 Telegram Settings</div>
+                <div class="section-title" style="font-size:11px;color:#94a3b8;font-weight:600;margin-bottom:8px;">🤖 Telegram Settings</div>
                 <div class="form-group">
                     <label>Bot Token</label>
                     <input type="text" id="telegramToken" placeholder="Token from @BotFather" />
@@ -1357,26 +1429,28 @@
         </div>
     </div>
 
-    <!-- LOGOUT CONFIRM -->
+    <!-- LOGOUT CONFIRM (MODERN GLASS) -->
     <div class="modal-overlay" id="logoutConfirmOverlay">
-        <div class="modal-box" style="max-width:360px;text-align:center;">
-            <div style="font-size:48px;margin-bottom:8px;">🚪</div>
+        <div class="modal-box" style="max-width:360px;">
+            <button class="close-btn" onclick="hideLogoutConfirm()">✕</button>
+            <div class="modal-icon">🚪</div>
             <h2>Confirm Logout</h2>
             <p>You will need to login again.</p>
-            <div class="btn-group" style="flex-direction:row;">
+            <div class="modal-actions" style="flex-direction:row;">
                 <button class="btn cancel" onclick="hideLogoutConfirm()" style="flex:1;">Cancel</button>
-                <button class="btn danger-confirm" onclick="executeLogout()" style="flex:1;">Logout</button>
+                <button class="btn danger" onclick="executeLogout()" style="flex:1;">Logout</button>
             </div>
         </div>
     </div>
 
-    <!-- CUSTOM CONFIRM -->
+    <!-- CUSTOM CONFIRM (MODERN GLASS) -->
     <div class="modal-overlay" id="customConfirmOverlay">
-        <div class="modal-box" style="max-width:360px;text-align:center;">
-            <div style="font-size:48px;margin-bottom:8px;" id="confirmIcon">⚠️</div>
+        <div class="modal-box" style="max-width:380px;">
+            <button class="close-btn" onclick="hideCustomConfirm()">✕</button>
+            <div class="modal-icon" id="confirmIcon">⚠️</div>
             <h2 id="confirmTitle">Confirm</h2>
             <p id="confirmMessage">Are you sure?</p>
-            <div class="btn-group" style="flex-direction:row;">
+            <div class="modal-actions" style="flex-direction:row;">
                 <button class="btn cancel" onclick="hideCustomConfirm()" style="flex:1;">Cancel</button>
                 <button class="btn confirm" id="confirmActionBtn" onclick="executeConfirmAction()" style="flex:1;">Confirm</button>
             </div>
@@ -1440,7 +1514,7 @@
             el.textContent = msg;
             el.className = 'toast show ' + (type || '');
             clearTimeout(el._timer);
-            el._timer = setTimeout(() => { el.className = 'toast'; }, 3000);
+            el._timer = setTimeout(() => { el.className = 'toast'; }, 3500);
         }
 
         function addPanelLog(message, type) {
@@ -1462,6 +1536,37 @@
                 html += `<div class="log-entry"><span class="time">[${log.time}]</span> <span class="type ${log.type}">${log.message}</span></div>`;
             });
             container.innerHTML = html;
+        }
+
+        // ============================================================
+        // MODERN MODAL FUNCTIONS (NO ALERTS)
+        // ============================================================
+
+        function showModal(title, message, icon, confirmText, callback, danger = false) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmIcon').textContent = icon || '⚠️';
+            const btn = document.getElementById('confirmActionBtn');
+            btn.className = danger ? 'btn danger' : 'btn confirm';
+            btn.textContent = confirmText || 'Confirm';
+            confirmCallback = callback;
+            document.getElementById('customConfirmOverlay').classList.add('active');
+        }
+
+        function hideCustomConfirm() {
+            document.getElementById('customConfirmOverlay').classList.remove('active');
+            confirmCallback = null;
+        }
+
+        function executeConfirmAction() {
+            if (confirmCallback) {
+                const cb = confirmCallback;
+                confirmCallback = null;
+                hideCustomConfirm();
+                cb();
+            } else {
+                hideCustomConfirm();
+            }
         }
 
         // ============================================================
@@ -1489,37 +1594,6 @@
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
-
-        // ============================================================
-        // CUSTOM CONFIRM
-        // ============================================================
-
-        function showCustomConfirm(title, message, icon, callback, danger = false) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmIcon').textContent = icon || '⚠️';
-            const btn = document.getElementById('confirmActionBtn');
-            btn.className = danger ? 'btn danger-confirm' : 'btn confirm';
-            btn.textContent = danger ? '🗑️ Confirm' : 'Confirm';
-            confirmCallback = callback;
-            document.getElementById('customConfirmOverlay').classList.add('active');
-        }
-
-        function hideCustomConfirm() {
-            document.getElementById('customConfirmOverlay').classList.remove('active');
-            confirmCallback = null;
-        }
-
-        function executeConfirmAction() {
-            if (confirmCallback) {
-                const cb = confirmCallback;
-                confirmCallback = null;
-                hideCustomConfirm();
-                cb();
-            } else {
-                hideCustomConfirm();
-            }
         }
 
         // ============================================================
@@ -1918,13 +1992,11 @@
 
             renderPanelLogs();
 
-            // Focus terminal input
             setTimeout(() => {
                 const input = document.getElementById('termInput');
                 if (input) input.focus();
             }, 100);
 
-            // Terminal enter key handler
             const termInput = document.getElementById('termInput');
             if (termInput) {
                 termInput.addEventListener('keydown', function(e) {
@@ -1968,21 +2040,17 @@
                 return;
             }
 
-            // Add to history
             termHistory.push(command);
             termIndex = -1;
 
-            // Display command in terminal
             const line = document.createElement('div');
             line.className = 'term-line';
             line.innerHTML = `<span class="prompt">$</span> <span class="cmd">${command}</span>`;
             output.appendChild(line);
 
-            // Clear input
             input.value = '';
             input.focus();
 
-            // Add "running" indicator
             const runningLine = document.createElement('div');
             runningLine.className = 'term-line';
             runningLine.innerHTML = `<span class="output" style="color:#3b82f6;">⏳ Executing...</span>`;
@@ -1997,18 +2065,15 @@
                 });
                 const data = await res.json();
 
-                // Remove running line
                 output.removeChild(runningLine);
 
                 if (data.status === 'ok') {
-                    // Add "Command sent" line
                     const sentLine = document.createElement('div');
                     sentLine.className = 'term-line';
                     sentLine.innerHTML = `<span class="output success">✅ Command sent. Waiting for response...</span>`;
                     output.appendChild(sentLine);
                     output.scrollTop = output.scrollHeight;
 
-                    // Wait for response by polling
                     let attempts = 0;
                     const maxAttempts = 15;
                     const checkInterval = setInterval(async () => {
@@ -2185,11 +2250,30 @@
             }
         }
 
-        async function panelUninstall(clientId) {
-            if (!confirm('⚠️ This will uninstall the RMM agent. Are you sure?')) return;
+        // ---- UNINSTALL WITH MODERN CONFIRM ----
+        function panelUninstall(clientId) {
+            const client = allClients.find(c => c.clientId === clientId);
+            if (!client) {
+                showToast('❌ Client not found', 'error');
+                return;
+            }
+            
+            // Set current client for the callback
+            const targetClientId = clientId;
+            
+            showModal(
+                '🗑️ Uninstall Agent',
+                `This will uninstall the RMM agent from <strong>${client.pcName}</strong>. The client will no longer report to the server.`,
+                '🗑️',
+                'Uninstall',
+                () => { executeUninstall(targetClientId); },
+                true
+            );
+        }
+
+        async function executeUninstall(clientId) {
             addPanelLog('🗑️ Uninstalling RMM agent...', 'warning');
 
-            // Show uninstall progress in terminal
             const output = document.getElementById('terminalOutput');
             if (output) {
                 const line = document.createElement('div');
@@ -2209,39 +2293,73 @@
                     headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await res.json();
+                
                 if (data.status === 'ok') {
-                    addPanelLog('✅ RMM uninstalled', 'success');
-                    showToast('✅ Uninstall sent', 'success');
+                    addPanelLog('✅ RMM uninstalled successfully', 'success');
+                    showToast('✅ Uninstall sent successfully', 'success');
+                    
                     if (output) {
                         const statusLine = output.querySelector('.term-line:last-child');
                         if (statusLine) {
-                            statusLine.innerHTML = `<span class="output success">✅ Uninstall command sent</span>`;
+                            statusLine.innerHTML = `<span class="output success">✅ Uninstall command sent — client will be removed</span>`;
                         }
                     }
+                    
+                    // Remove client from dashboard after uninstall
                     setTimeout(() => {
                         fetchRmmClients();
                         closePanel();
-                    }, 3000);
+                    }, 2000);
                 } else {
                     addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
+                    if (output) {
+                        const statusLine = output.querySelector('.term-line:last-child');
+                        if (statusLine) {
+                            statusLine.innerHTML = `<span class="output error">❌ Uninstall failed: ${data.message}</span>`;
+                        }
+                    }
                 }
             } catch (e) {
                 addPanelLog(`❌ Error: ${e.message}`, 'error');
                 showToast('❌ Error uninstalling', 'error');
+                if (output) {
+                    const statusLine = output.querySelector('.term-line:last-child');
+                    if (statusLine) {
+                        statusLine.innerHTML = `<span class="output error">❌ Error: ${e.message}</span>`;
+                    }
+                }
             }
         }
 
-        async function panelDelete(clientId) {
-            if (!confirm('Delete this client from the dashboard?')) return;
+        // ---- DELETE WITH MODERN CONFIRM ----
+        function panelDelete(clientId) {
+            const client = allClients.find(c => c.clientId === clientId);
+            if (!client) {
+                showToast('❌ Client not found', 'error');
+                return;
+            }
+            
+            const targetClientId = clientId;
+            
+            showModal(
+                '✕ Delete Client',
+                `Delete <strong>${client.pcName}</strong> from the dashboard? This will <strong>not</strong> uninstall the agent from the machine.`,
+                '✕',
+                'Delete',
+                () => { executeDelete(targetClientId); },
+                true
+            );
+        }
 
+        async function executeDelete(clientId) {
             try {
                 const res = await fetch(`/api/rmm/delete/${clientId}`, {
                     method: 'DELETE'
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
-                    addPanelLog('🗑️ Client deleted', 'info');
+                    addPanelLog('🗑️ Client deleted from dashboard', 'info');
                     showToast('✅ Client deleted', 'success');
                     fetchRmmClients();
                     closePanel();
@@ -2312,8 +2430,17 @@
         }
 
         async function deleteFile() {
-            if (!confirm('Delete the uploaded ScreenConnect installer?')) return;
+            showModal(
+                '🗑️ Delete File',
+                'Delete the uploaded ScreenConnect installer file?',
+                '🗑️',
+                'Delete',
+                () => { executeDeleteFile(); },
+                true
+            );
+        }
 
+        async function executeDeleteFile() {
             try {
                 const res = await fetch('/api/upload/screenconnect', {
                     method: 'DELETE'
@@ -2482,18 +2609,8 @@
                 hideLogoutConfirm();
                 hideCustomConfirm();
             }
-            // Global terminal focus shortcut (Ctrl+Shift+T)
-            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-                e.preventDefault();
-                const termInput = document.getElementById('termInput');
-                if (termInput) {
-                    termInput.focus();
-                    termInput.select();
-                }
-            }
         });
 
-        // Click outside terminal to focus
         document.addEventListener('click', function(e) {
             const terminal = document.getElementById('terminalContainer');
             if (terminal && terminal.contains(e.target)) {
