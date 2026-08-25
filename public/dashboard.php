@@ -527,6 +527,128 @@
         .client-card .card-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
         .client-card .card-actions .btn-sm .icon { font-size: 10px; }
 
+        /* ---- TERMINAL VIEW ---- */
+        .terminal-view {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .terminal-view .terminal-select {
+            margin-bottom: 12px;
+        }
+        .terminal-view .terminal-select select {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            width: 100%;
+            max-width: 400px;
+            cursor: pointer;
+        }
+        .terminal-view .terminal-select select:focus {
+            border-color: #00ff88;
+        }
+        .terminal-view .terminal-select select option { background: #0f1626; }
+
+        .terminal-view .terminal-box {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .terminal-view .terminal-box .term-header {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .terminal-view .terminal-box .term-header .dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .terminal-view .terminal-box .term-header .dots .red { background: #f43f5e; }
+        .terminal-view .terminal-box .term-header .dots .yellow { background: #fbbf24; }
+        .terminal-view .terminal-box .term-header .dots .green { background: #00ff88; }
+
+        .terminal-view .terminal-box .term-output {
+            padding: 12px 16px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 12px;
+            color: #e2e8f0;
+            line-height: 1.6;
+            background: rgba(0,0,0,0.2);
+        }
+        .terminal-view .terminal-box .term-output .line {
+            padding: 1px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        .terminal-view .terminal-box .term-output .line .prompt { color: #00ff88; font-weight: 500; }
+        .terminal-view .terminal-box .term-output .line .cmd { color: #f1f5f9; }
+        .terminal-view .terminal-box .term-output .line .output { color: #94a3b8; }
+        .terminal-view .terminal-box .term-output .line .error { color: #f43f5e; }
+        .terminal-view .terminal-box .term-output .line .success { color: #00ff88; }
+
+        .terminal-view .terminal-box .term-input-wrap {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px 10px 16px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            gap: 8px;
+        }
+        .terminal-view .terminal-box .term-input-wrap .prompt-symbol {
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 13px;
+            font-family: monospace;
+            flex-shrink: 0;
+        }
+        .terminal-view .terminal-box .term-input-wrap input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 13px;
+            outline: none;
+            padding: 4px 0;
+        }
+        .terminal-view .terminal-box .term-input-wrap input::placeholder { color: #334155; }
+        .terminal-view .terminal-box .term-input-wrap .term-send {
+            background: none;
+            border: none;
+            color: #00ff88;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 2px 8px;
+            transition: 0.2s;
+        }
+        .terminal-view .terminal-box .term-input-wrap .term-send:hover {
+            color: #66ffaa;
+            transform: scale(1.1);
+        }
+        .terminal-view .terminal-box .term-input-wrap .term-status {
+            font-size: 11px;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
         .payload-box {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
@@ -640,7 +762,6 @@
         .toast.error { border-color: #f43f5e; color: #f43f5e; }
         .toast.warning { border-color: #fbbf24; color: #fbbf24; }
 
-        /* ---- MODERN GLASS MODAL ---- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -680,29 +801,10 @@
         }
         @keyframes modalIn { 0% { opacity: 0; transform: scale(0.92) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
-        .modal-box .modal-icon {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 12px;
-        }
-        .modal-box h2 {
-            color: #f1f5f9;
-            font-size: 20px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 6px;
-        }
-        .modal-box p {
-            color: #94a3b8;
-            font-size: 14px;
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 24px;
-        }
-        .modal-box .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
+        .modal-box .modal-icon { font-size: 48px; text-align: center; margin-bottom: 12px; }
+        .modal-box h2 { color: #f1f5f9; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+        .modal-box p { color: #94a3b8; font-size: 14px; text-align: center; line-height: 1.6; margin-bottom: 24px; }
+        .modal-box .modal-actions { display: flex; gap: 10px; }
         .modal-box .modal-actions .btn {
             flex: 1;
             justify-content: center;
@@ -717,58 +819,13 @@
             transition: all 0.25s ease;
             font-family: inherit;
         }
-        .modal-box .modal-actions .btn:hover {
-            border-color: rgba(255,255,255,0.12);
-            color: #e2e8f0;
-            transform: translateY(-1px);
-        }
-        .modal-box .modal-actions .btn.cancel {
-            border-color: rgba(255,255,255,0.06);
-            color: #94a3b8;
-        }
-        .modal-box .modal-actions .btn.cancel:hover {
-            border-color: rgba(255,255,255,0.12);
-            color: #e2e8f0;
-            background: rgba(255,255,255,0.04);
-        }
-        .modal-box .modal-actions .btn.confirm {
-            border-color: #00ff88;
-            color: #00ff88;
-        }
-        .modal-box .modal-actions .btn.confirm:hover {
-            background: rgba(0, 255, 136, 0.08);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.05);
-        }
-        .modal-box .modal-actions .btn.danger {
-            border-color: #f43f5e;
-            color: #f43f5e;
-        }
-        .modal-box .modal-actions .btn.danger:hover {
-            background: rgba(244, 63, 94, 0.08);
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.05);
-        }
-        .modal-box .modal-actions .btn.violet {
-            border-color: #8b5cf6;
-            color: #8b5cf6;
-        }
-        .modal-box .modal-actions .btn.violet:hover {
-            background: rgba(139, 92, 246, 0.08);
-        }
-        .modal-box .modal-actions .btn.gold {
-            border-color: #fbbf24;
-            color: #fbbf24;
-        }
-        .modal-box .modal-actions .btn.gold:hover {
-            background: rgba(251, 191, 36, 0.08);
-        }
-        .modal-box .modal-actions .btn.blue {
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-        .modal-box .modal-actions .btn.blue:hover {
-            background: rgba(59, 130, 246, 0.08);
-        }
-
+        .modal-box .modal-actions .btn:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; transform: translateY(-1px); }
+        .modal-box .modal-actions .btn.cancel { border-color: rgba(255,255,255,0.06); color: #94a3b8; }
+        .modal-box .modal-actions .btn.cancel:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; background: rgba(255,255,255,0.04); }
+        .modal-box .modal-actions .btn.confirm { border-color: #00ff88; color: #00ff88; }
+        .modal-box .modal-actions .btn.confirm:hover { background: rgba(0, 255, 136, 0.08); box-shadow: 0 0 30px rgba(0, 255, 136, 0.05); }
+        .modal-box .modal-actions .btn.danger { border-color: #f43f5e; color: #f43f5e; }
+        .modal-box .modal-actions .btn.danger:hover { background: rgba(244, 63, 94, 0.08); box-shadow: 0 0 30px rgba(244, 63, 94, 0.05); }
         .modal-box .close-btn {
             position: absolute;
             top: 12px;
@@ -856,7 +913,6 @@
         }
         .powered-footer .name { color: #00ff88; font-weight: 600; }
 
-        /* ---- SIDE PANEL ---- */
         .side-panel-overlay {
             display: none;
             position: fixed;
@@ -1005,95 +1061,6 @@
         .side-panel .panel-body .screen-container .screen-placeholder .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.3; }
         .side-panel .panel-body .screen-container .screen-placeholder .sub { font-size: 11px; color: #334155; }
 
-        .side-panel .panel-body .terminal-container {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-        .side-panel .panel-body .terminal-container .terminal-header {
-            padding: 6px 12px;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 10px;
-            color: #64748b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .side-panel .panel-body .terminal-container .terminal-header .term-dots span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 4px;
-        }
-        .side-panel .panel-body .terminal-container .terminal-header .term-dots .red { background: #f43f5e; }
-        .side-panel .panel-body .terminal-container .terminal-header .term-dots .yellow { background: #fbbf24; }
-        .side-panel .panel-body .terminal-container .terminal-header .term-dots .green { background: #00ff88; }
-
-        .side-panel .panel-body .terminal-container .terminal-output {
-            padding: 8px 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            font-family: 'Cascadia Code', 'Consolas', monospace;
-            font-size: 11px;
-            color: #e2e8f0;
-            min-height: 60px;
-            background: rgba(0,0,0,0.2);
-        }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line {
-            padding: 1px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-            word-break: break-all;
-            white-space: pre-wrap;
-        }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .prompt { color: #00ff88; font-weight: 500; }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .cmd { color: #f1f5f9; }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .output { color: #94a3b8; }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .error { color: #f43f5e; }
-        .side-panel .panel-body .terminal-container .terminal-output .term-line .success { color: #00ff88; }
-
-        .side-panel .panel-body .terminal-container .terminal-input-wrap {
-            display: flex;
-            align-items: center;
-            padding: 4px 12px 8px 12px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            gap: 6px;
-        }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap .prompt-symbol {
-            color: #00ff88;
-            font-weight: 700;
-            font-size: 12px;
-            font-family: monospace;
-            flex-shrink: 0;
-        }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #e2e8f0;
-            font-family: 'Cascadia Code', 'Consolas', monospace;
-            font-size: 12px;
-            outline: none;
-            padding: 4px 0;
-        }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap input::placeholder { color: #334155; }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send {
-            background: none;
-            border: none;
-            color: #00ff88;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 2px 6px;
-            transition: 0.2s;
-        }
-        .side-panel .panel-body .terminal-container .terminal-input-wrap .term-send:hover { color: #66ffaa; transform: scale(1.1); }
-
         .side-panel .panel-body .log-container {
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.04);
@@ -1170,6 +1137,7 @@
             .client-card .card-actions .btn-sm { font-size: 8px; padding: 2px 8px; }
             .side-panel .panel-header .panel-title { font-size: 14px; }
             .side-panel .panel-body .panel-actions .btn-sm { font-size: 9px; }
+            .terminal-view .terminal-box .term-output { font-size: 11px; }
         }
     </style>
 </head>
@@ -1211,6 +1179,11 @@
         <div class="nav-item" data-view="payload" id="navPayload">
             <span class="icon">📦</span>
             Payload Generator
+        </div>
+
+        <div class="nav-item" data-view="terminal" id="navTerminal">
+            <span class="icon">💻</span>
+            Terminal
         </div>
 
         <div class="nav-divider"></div>
@@ -1346,6 +1319,40 @@
             </div>
         </div>
 
+        <!-- VIEW: TERMINAL -->
+        <div class="view-content" id="viewTerminal">
+            <div class="terminal-view">
+                <div class="terminal-select">
+                    <label style="display:block;font-size:11px;color:#64748b;margin-bottom:4px;">Select a client:</label>
+                    <select id="terminalClientSelect" onchange="terminalClientChanged()">
+                        <option value="">-- Select a client --</option>
+                    </select>
+                </div>
+
+                <div class="terminal-box">
+                    <div class="term-header">
+                        <span id="terminalTitle">⚡ Remote Terminal</span>
+                        <span class="dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </span>
+                    </div>
+                    <div class="term-output" id="terminalOutput">
+                        <div class="line">
+                            <span class="output" style="color:#475569;">Select a client and type a command...</span>
+                        </div>
+                    </div>
+                    <div class="term-input-wrap">
+                        <span class="prompt-symbol">$</span>
+                        <input type="text" id="terminalInput" placeholder="Enter command..." disabled />
+                        <button class="term-send" onclick="sendTerminalCommand()" disabled>▶</button>
+                        <span class="term-status" id="terminalStatus">⏸️</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="powered-footer">
             Powered By <span class="name">CipherAnon</span>
         </div>
@@ -1429,7 +1436,7 @@
         </div>
     </div>
 
-    <!-- LOGOUT CONFIRM (MODERN GLASS) -->
+    <!-- LOGOUT CONFIRM -->
     <div class="modal-overlay" id="logoutConfirmOverlay">
         <div class="modal-box" style="max-width:360px;">
             <button class="close-btn" onclick="hideLogoutConfirm()">✕</button>
@@ -1443,7 +1450,7 @@
         </div>
     </div>
 
-    <!-- CUSTOM CONFIRM (MODERN GLASS) -->
+    <!-- CUSTOM CONFIRM -->
     <div class="modal-overlay" id="customConfirmOverlay">
         <div class="modal-box" style="max-width:380px;">
             <button class="close-btn" onclick="hideCustomConfirm()">✕</button>
@@ -1472,6 +1479,8 @@
         let panelLogs = [];
         let termHistory = [];
         let termIndex = -1;
+        let terminalHistory = [];
+        let terminalIndex = -1;
 
         // ============================================================
         // HELPERS
@@ -1539,7 +1548,7 @@
         }
 
         // ============================================================
-        // MODERN MODAL FUNCTIONS (NO ALERTS)
+        // MODAL FUNCTIONS
         // ============================================================
 
         function showModal(title, message, icon, confirmText, callback, danger = false) {
@@ -1654,6 +1663,7 @@
                 updateStats(clients);
                 applyFilters();
                 updatePayloadUrls();
+                updateTerminalClients(clients);
             } catch (e) {
                 showToast('⚠️ Failed to fetch RMM clients', 'error');
             }
@@ -1673,6 +1683,22 @@
             document.getElementById('sidebarTotal').textContent = total;
             document.getElementById('sidebarOnline').textContent = online;
             document.getElementById('sidebarOffline').textContent = offline;
+        }
+
+        function updateTerminalClients(clients) {
+            const select = document.getElementById('terminalClientSelect');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">-- Select a client --</option>';
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.clientId;
+                const status = client.status === 'online' ? '🟢' : '🔴';
+                option.textContent = `${status} ${client.pcName} (${client.ip || 'N/A'})`;
+                select.appendChild(option);
+            });
+            if (currentValue && clients.find(c => c.clientId === currentValue)) {
+                select.value = currentValue;
+            }
         }
 
         // ============================================================
@@ -1784,6 +1810,13 @@
                     document.getElementById('pageTitle').textContent = 'Payload Generator';
                     document.getElementById('pageSub').textContent = 'Generate deployment links and commands.';
                     updatePayloadUrls();
+                } else if (view === 'terminal') {
+                    document.getElementById('viewTerminal').classList.add('active');
+                    document.getElementById('pageTitle').textContent = '💻 Remote Terminal';
+                    document.getElementById('pageSub').textContent = 'Execute commands on remote machines.';
+                    updateTerminalClients(allClients);
+                    const input = document.getElementById('terminalInput');
+                    if (input) input.focus();
                 }
             });
         });
@@ -1966,26 +1999,26 @@
                     <div class="log-entry"><span class="time">[System]</span> <span class="type info">Ready</span></div>
                 </div>
 
-                <div class="section-title">💻 Command Prompt</div>
-                <div class="terminal-container" id="terminalContainer">
-                    <div class="terminal-header">
+                <div class="section-title">💻 Terminal</div>
+                <div class="terminal-container" style="background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04);border-radius:10px;overflow:hidden;">
+                    <div class="terminal-header" style="padding:6px 12px;background:rgba(255,255,255,0.02);border-bottom:1px solid rgba(255,255,255,0.04);font-size:10px;color:#64748b;display:flex;justify-content:space-between;align-items:center;font-weight:500;text-transform:uppercase;letter-spacing:0.4px;">
                         <span>⚡ Terminal</span>
                         <div class="term-dots">
-                            <span class="red"></span>
-                            <span class="yellow"></span>
-                            <span class="green"></span>
+                            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:#f43f5e;"></span>
+                            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:#fbbf24;"></span>
+                            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;background:#00ff88;"></span>
                         </div>
                     </div>
-                    <div class="terminal-output" id="terminalOutput">
+                    <div class="terminal-output" id="panelTerminalOutput" style="padding:8px 12px;max-height:150px;overflow-y:auto;font-family:'Cascadia Code','Consolas',monospace;font-size:11px;color:#e2e8f0;min-height:60px;background:rgba(0,0,0,0.2);">
                         <div class="term-line">
-                            <span class="prompt">$</span>
-                            <span class="cmd">type any command...</span>
+                            <span class="prompt" style="color:#00ff88;font-weight:500;">$</span>
+                            <span class="cmd" style="color:#f1f5f9;">type a command...</span>
                         </div>
                     </div>
-                    <div class="terminal-input-wrap">
-                        <span class="prompt-symbol">$</span>
-                        <input type="text" id="termInput" placeholder="Enter command..." autofocus />
-                        <button class="term-send" onclick="sendTermCommand()">▶</button>
+                    <div class="terminal-input-wrap" style="display:flex;align-items:center;padding:4px 12px 8px 12px;border-top:1px solid rgba(255,255,255,0.04);gap:6px;">
+                        <span class="prompt-symbol" style="color:#00ff88;font-weight:700;font-size:12px;font-family:monospace;flex-shrink:0;">$</span>
+                        <input type="text" id="panelTermInput" placeholder="Enter command..." style="flex:1;background:transparent;border:none;color:#e2e8f0;font-family:'Cascadia Code','Consolas',monospace;font-size:12px;outline:none;padding:4px 0;" />
+                        <button class="term-send" onclick="sendPanelTermCommand()" style="background:none;border:none;color:#00ff88;cursor:pointer;font-size:16px;padding:2px 6px;transition:0.2s;">▶</button>
                     </div>
                 </div>
             `;
@@ -1993,45 +2026,28 @@
             renderPanelLogs();
 
             setTimeout(() => {
-                const input = document.getElementById('termInput');
+                const input = document.getElementById('panelTermInput');
                 if (input) input.focus();
             }, 100);
 
-            const termInput = document.getElementById('termInput');
-            if (termInput) {
-                termInput.addEventListener('keydown', function(e) {
+            const panelInput = document.getElementById('panelTermInput');
+            if (panelInput) {
+                panelInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
-                        sendTermCommand();
-                    }
-                    if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        if (termIndex < termHistory.length - 1) {
-                            termIndex++;
-                            this.value = termHistory[termHistory.length - 1 - termIndex] || '';
-                        }
-                    }
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        if (termIndex > 0) {
-                            termIndex--;
-                            this.value = termHistory[termHistory.length - 1 - termIndex] || '';
-                        } else {
-                            termIndex = -1;
-                            this.value = '';
-                        }
+                        sendPanelTermCommand();
                     }
                 });
             }
         }
 
         // ============================================================
-        // TERMINAL FUNCTION
+        // PANEL TERMINAL
         // ============================================================
 
-        async function sendTermCommand() {
-            const input = document.getElementById('termInput');
-            const output = document.getElementById('terminalOutput');
+        async function sendPanelTermCommand() {
+            const input = document.getElementById('panelTermInput');
+            const output = document.getElementById('panelTerminalOutput');
             const command = input.value.trim();
 
             if (!command || !selectedClient) {
@@ -2040,12 +2056,9 @@
                 return;
             }
 
-            termHistory.push(command);
-            termIndex = -1;
-
             const line = document.createElement('div');
             line.className = 'term-line';
-            line.innerHTML = `<span class="prompt">$</span> <span class="cmd">${command}</span>`;
+            line.innerHTML = `<span class="prompt" style="color:#00ff88;font-weight:500;">$</span> <span class="cmd" style="color:#f1f5f9;">${command}</span>`;
             output.appendChild(line);
 
             input.value = '';
@@ -2058,7 +2071,7 @@
             output.scrollTop = output.scrollHeight;
 
             try {
-                const res = await fetch(`/api/rmm/command/${selectedClient.clientId}`, {
+                const res = await fetch(`/api/rmm/terminal/${selectedClient.clientId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ command: command })
@@ -2067,67 +2080,35 @@
 
                 output.removeChild(runningLine);
 
-                if (data.status === 'ok') {
-                    const sentLine = document.createElement('div');
-                    sentLine.className = 'term-line';
-                    sentLine.innerHTML = `<span class="output success">✅ Command sent. Waiting for response...</span>`;
-                    output.appendChild(sentLine);
+                if (data.status === 'ok' || data.status === 'timeout') {
+                    const resultLine = document.createElement('div');
+                    resultLine.className = 'term-line';
+                    if (data.success) {
+                        resultLine.innerHTML = `<span class="output success" style="color:#00ff88;">✅ ${data.result || 'Command completed'}</span>`;
+                    } else if (data.status === 'timeout') {
+                        resultLine.innerHTML = `<span class="output error" style="color:#fbbf24;">⏰ ${data.message || 'Command timed out'}</span>`;
+                    } else {
+                        resultLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ ${data.result || 'Command failed'}</span>`;
+                    }
+                    output.appendChild(resultLine);
                     output.scrollTop = output.scrollHeight;
-
-                    let attempts = 0;
-                    const maxAttempts = 15;
-                    const checkInterval = setInterval(async () => {
-                        attempts++;
-                        try {
-                            const respRes = await fetch(`/api/rmm/client/${selectedClient.clientId}`);
-                            const clientData = await respRes.json();
-                            const lastCmd = clientData.commands && clientData.commands.length > 0 ?
-                                clientData.commands[clientData.commands.length - 1] : null;
-
-                            if (lastCmd && lastCmd.id === data.commandId) {
-                                clearInterval(checkInterval);
-                                const resultLine = document.createElement('div');
-                                resultLine.className = 'term-line';
-                                if (lastCmd.status === 'completed' || lastCmd.status === 'success') {
-                                    resultLine.innerHTML = `<span class="output success">✅ ${lastCmd.result || 'Command completed'}</span>`;
-                                } else if (lastCmd.status === 'failed') {
-                                    resultLine.innerHTML = `<span class="output error">❌ ${lastCmd.result || 'Command failed'}</span>`;
-                                } else {
-                                    resultLine.innerHTML = `<span class="output">${lastCmd.result || 'Command completed'}</span>`;
-                                }
-                                output.appendChild(resultLine);
-                                output.scrollTop = output.scrollHeight;
-                                addPanelLog(`✅ Command: ${command}`, 'success');
-                                return;
-                            }
-                        } catch (e) {}
-
-                        if (attempts >= maxAttempts) {
-                            clearInterval(checkInterval);
-                            const timeoutLine = document.createElement('div');
-                            timeoutLine.className = 'term-line';
-                            timeoutLine.innerHTML = `<span class="output error">⚠️ Response timeout. Check client log.</span>`;
-                            output.appendChild(timeoutLine);
-                            output.scrollTop = output.scrollHeight;
-                            addPanelLog(`⚠️ Command timed out: ${command}`, 'warning');
-                        }
-                    }, 1000);
+                    addPanelLog(`💻 ${command}`, data.success ? 'success' : 'error');
                 } else {
                     const errorLine = document.createElement('div');
                     errorLine.className = 'term-line';
-                    errorLine.innerHTML = `<span class="output error">❌ Failed: ${data.message}</span>`;
+                    errorLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Failed: ${data.message}</span>`;
                     output.appendChild(errorLine);
                     output.scrollTop = output.scrollHeight;
-                    addPanelLog(`❌ Command failed: ${command}`, 'error');
+                    addPanelLog(`💻 Failed: ${command}`, 'error');
                 }
             } catch (e) {
                 output.removeChild(runningLine);
                 const errorLine = document.createElement('div');
                 errorLine.className = 'term-line';
-                errorLine.innerHTML = `<span class="output error">❌ Error: ${e.message}</span>`;
+                errorLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Error: ${e.message}</span>`;
                 output.appendChild(errorLine);
                 output.scrollTop = output.scrollHeight;
-                addPanelLog(`❌ Error: ${e.message}`, 'error');
+                addPanelLog(`💻 Error: ${e.message}`, 'error');
             }
         }
 
@@ -2250,7 +2231,6 @@
             }
         }
 
-        // ---- UNINSTALL WITH MODERN CONFIRM ----
         function panelUninstall(clientId) {
             const client = allClients.find(c => c.clientId === clientId);
             if (!client) {
@@ -2258,7 +2238,6 @@
                 return;
             }
             
-            // Set current client for the callback
             const targetClientId = clientId;
             
             showModal(
@@ -2274,11 +2253,11 @@
         async function executeUninstall(clientId) {
             addPanelLog('🗑️ Uninstalling RMM agent...', 'warning');
 
-            const output = document.getElementById('terminalOutput');
+            const output = document.getElementById('panelTerminalOutput');
             if (output) {
                 const line = document.createElement('div');
                 line.className = 'term-line';
-                line.innerHTML = `<span class="prompt">$</span> <span class="cmd">uninstall-rmm</span>`;
+                line.innerHTML = `<span class="prompt" style="color:#00ff88;font-weight:500;">$</span> <span class="cmd" style="color:#f1f5f9;">uninstall-rmm</span>`;
                 output.appendChild(line);
                 const statusLine = document.createElement('div');
                 statusLine.className = 'term-line';
@@ -2301,11 +2280,10 @@
                     if (output) {
                         const statusLine = output.querySelector('.term-line:last-child');
                         if (statusLine) {
-                            statusLine.innerHTML = `<span class="output success">✅ Uninstall command sent — client will be removed</span>`;
+                            statusLine.innerHTML = `<span class="output success" style="color:#00ff88;">✅ Uninstall command sent — client will be removed</span>`;
                         }
                     }
                     
-                    // Remove client from dashboard after uninstall
                     setTimeout(() => {
                         fetchRmmClients();
                         closePanel();
@@ -2316,7 +2294,7 @@
                     if (output) {
                         const statusLine = output.querySelector('.term-line:last-child');
                         if (statusLine) {
-                            statusLine.innerHTML = `<span class="output error">❌ Uninstall failed: ${data.message}</span>`;
+                            statusLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Uninstall failed: ${data.message}</span>`;
                         }
                     }
                 }
@@ -2326,13 +2304,12 @@
                 if (output) {
                     const statusLine = output.querySelector('.term-line:last-child');
                     if (statusLine) {
-                        statusLine.innerHTML = `<span class="output error">❌ Error: ${e.message}</span>`;
+                        statusLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Error: ${e.message}</span>`;
                     }
                 }
             }
         }
 
-        // ---- DELETE WITH MODERN CONFIRM ----
         function panelDelete(clientId) {
             const client = allClients.find(c => c.clientId === clientId);
             if (!client) {
@@ -2368,6 +2345,134 @@
                 }
             } catch (e) {
                 showToast('❌ Error deleting client', 'error');
+            }
+        }
+
+        // ============================================================
+        // TERMINAL VIEW FUNCTIONS
+        // ============================================================
+
+        function terminalClientChanged() {
+            const select = document.getElementById('terminalClientSelect');
+            const clientId = select.value;
+            const input = document.getElementById('terminalInput');
+            const sendBtn = document.querySelector('.term-send');
+            const status = document.getElementById('terminalStatus');
+            const output = document.getElementById('terminalOutput');
+
+            if (clientId) {
+                const client = allClients.find(c => c.clientId === clientId);
+                input.disabled = false;
+                sendBtn.disabled = false;
+                status.textContent = client && client.status === 'online' ? '🟢 Online' : '🔴 Offline';
+                status.style.color = client && client.status === 'online' ? '#00ff88' : '#f43f5e';
+                document.getElementById('terminalTitle').textContent = `💻 ${client ? client.pcName : 'Remote Terminal'}`;
+                output.innerHTML = `
+                    <div class="line">
+                        <span class="output" style="color:#475569;">Connected to ${client ? client.pcName : ''}. Type a command...</span>
+                    </div>
+                `;
+            } else {
+                input.disabled = true;
+                sendBtn.disabled = true;
+                status.textContent = '⏸️';
+                status.style.color = '#475569';
+                document.getElementById('terminalTitle').textContent = '⚡ Remote Terminal';
+                output.innerHTML = `
+                    <div class="line">
+                        <span class="output" style="color:#475569;">Select a client and type a command...</span>
+                    </div>
+                `;
+            }
+            input.value = '';
+            input.focus();
+        }
+
+        async function sendTerminalCommand() {
+            const select = document.getElementById('terminalClientSelect');
+            const clientId = select.value;
+            const input = document.getElementById('terminalInput');
+            const output = document.getElementById('terminalOutput');
+            const command = input.value.trim();
+
+            if (!clientId) {
+                showToast('❌ Please select a client first', 'error');
+                return;
+            }
+
+            if (!command) {
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            const client = allClients.find(c => c.clientId === clientId);
+            if (!client) {
+                showToast('❌ Client not found', 'error');
+                return;
+            }
+
+            if (client.status !== 'online') {
+                showToast('❌ Client is offline', 'error');
+                return;
+            }
+
+            terminalHistory.push(command);
+            terminalIndex = -1;
+
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.innerHTML = `<span class="prompt">$</span> <span class="cmd">${command}</span>`;
+            output.appendChild(line);
+
+            input.value = '';
+            input.focus();
+
+            const runningLine = document.createElement('div');
+            runningLine.className = 'line';
+            runningLine.innerHTML = `<span class="output" style="color:#3b82f6;">⏳ Executing...</span>`;
+            output.appendChild(runningLine);
+            output.scrollTop = output.scrollHeight;
+
+            try {
+                const res = await fetch(`/api/rmm/terminal/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: command })
+                });
+                const data = await res.json();
+
+                output.removeChild(runningLine);
+
+                if (data.status === 'ok' || data.status === 'timeout') {
+                    const resultLine = document.createElement('div');
+                    resultLine.className = 'line';
+                    if (data.success) {
+                        resultLine.innerHTML = `<span class="output success" style="color:#00ff88;">✅ ${data.result || 'Command completed'}</span>`;
+                    } else if (data.status === 'timeout') {
+                        resultLine.innerHTML = `<span class="output error" style="color:#fbbf24;">⏰ ${data.message || 'Command timed out'}</span>`;
+                    } else {
+                        resultLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ ${data.result || 'Command failed'}</span>`;
+                    }
+                    output.appendChild(resultLine);
+                    output.scrollTop = output.scrollHeight;
+                    showToast(`💻 Command executed: ${command}`, data.success ? 'success' : 'error');
+                } else {
+                    const errorLine = document.createElement('div');
+                    errorLine.className = 'line';
+                    errorLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Failed: ${data.message}</span>`;
+                    output.appendChild(errorLine);
+                    output.scrollTop = output.scrollHeight;
+                    showToast('❌ Command failed', 'error');
+                }
+            } catch (e) {
+                output.removeChild(runningLine);
+                const errorLine = document.createElement('div');
+                errorLine.className = 'line';
+                errorLine.innerHTML = `<span class="output error" style="color:#f43f5e;">❌ Error: ${e.message}</span>`;
+                output.appendChild(errorLine);
+                output.scrollTop = output.scrollHeight;
+                showToast('❌ Error executing command', 'error');
             }
         }
 
@@ -2609,13 +2714,54 @@
                 hideLogoutConfirm();
                 hideCustomConfirm();
             }
+            // Global terminal focus shortcut (Ctrl+Shift+T)
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                e.preventDefault();
+                const termInput = document.getElementById('terminalInput');
+                if (termInput && !termInput.disabled) {
+                    termInput.focus();
+                    termInput.select();
+                }
+                const panelInput = document.getElementById('panelTermInput');
+                if (panelInput && !panelInput.disabled) {
+                    panelInput.focus();
+                    panelInput.select();
+                }
+            }
         });
 
         document.addEventListener('click', function(e) {
             const terminal = document.getElementById('terminalContainer');
             if (terminal && terminal.contains(e.target)) {
-                const input = document.getElementById('termInput');
-                if (input) input.focus();
+                const input = document.getElementById('terminalInput');
+                if (input && !input.disabled) input.focus();
+            }
+        });
+
+        // ============================================================
+        // KEYBOARD SHORTCUTS FOR TERMINAL
+        // ============================================================
+
+        document.addEventListener('keydown', function(e) {
+            const input = document.getElementById('terminalInput');
+            if (input && document.activeElement === input) {
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (terminalIndex < terminalHistory.length - 1) {
+                        terminalIndex++;
+                        input.value = terminalHistory[terminalHistory.length - 1 - terminalIndex] || '';
+                    }
+                }
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (terminalIndex > 0) {
+                        terminalIndex--;
+                        input.value = terminalHistory[terminalHistory.length - 1 - terminalIndex] || '';
+                    } else {
+                        terminalIndex = -1;
+                        input.value = '';
+                    }
+                }
             }
         });
 
