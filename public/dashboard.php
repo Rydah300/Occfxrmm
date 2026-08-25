@@ -52,10 +52,6 @@
             -webkit-user-select: none;
         }
 
-        /* ============================================================
-           SIDEBAR
-           ============================================================ */
-
         .sidebar {
             width: 260px;
             background: rgba(15, 22, 38, 0.95);
@@ -207,10 +203,6 @@
             z-index: 50;
         }
 
-        /* ============================================================
-           MAIN CONTENT
-           ============================================================ */
-
         .main {
             flex: 1;
             padding: 20px 28px 28px;
@@ -221,7 +213,6 @@
         }
         .main.shifted { margin-right: 420px; }
 
-        /* ---- TOP BAR ---- */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -311,7 +302,6 @@
         .topbar .right .icon-btn.danger { border-color: rgba(244, 63, 94, 0.2); color: #f43f5e; }
         .topbar .right .icon-btn.danger:hover { background: rgba(244, 63, 94, 0.1); }
 
-        /* ---- STATS ROW ---- */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -335,7 +325,6 @@
         .stat-card .number.blue { color: #3b82f6; }
         .stat-card .sub { font-size: 10px; color: #334155; margin-top: 2px; }
 
-        /* ---- FILTER BAR ---- */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -397,7 +386,6 @@
         .filter-bar .btn-filter.primary { border-color: #00ff88; color: #00ff88; }
         .filter-bar .btn-filter.primary:hover { background: rgba(0, 255, 136, 0.08); }
 
-        /* ---- CLIENT GRID ---- */
         .clients-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -539,7 +527,6 @@
         .client-card .card-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
         .client-card .card-actions .btn-sm .icon { font-size: 10px; }
 
-        /* ---- PAYLOAD GENERATOR ---- */
         .payload-box {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
@@ -619,7 +606,6 @@
         .payload-box .payload-actions .btn.gold { border-color: #fbbf24; color: #fbbf24; }
         .payload-box .payload-actions .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
 
-        /* ---- EMPTY STATE ---- */
         .empty-state {
             grid-column: 1/-1;
             text-align: center;
@@ -630,7 +616,6 @@
         .empty-state h3 { color: #64748b; font-size: 17px; font-weight: 600; }
         .empty-state p { font-size: 13px; margin-top: 4px; }
 
-        /* ---- TOAST ---- */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -655,7 +640,6 @@
         .toast.error { border-color: #f43f5e; color: #f43f5e; }
         .toast.warning { border-color: #fbbf24; color: #fbbf24; }
 
-        /* ---- MODALS ---- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -775,10 +759,6 @@
             border-top: 1px solid rgba(255,255,255,0.04);
         }
         .powered-footer .name { color: #00ff88; font-weight: 600; }
-
-        /* ============================================================
-           SIDE PANEL — MODERN SLIDE-OUT
-           ============================================================ */
 
         .side-panel-overlay {
             display: none;
@@ -964,7 +944,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ---- RESPONSIVE ---- */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -1196,6 +1175,33 @@
             <p>Configure your RMM deployment settings.</p>
 
             <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
+                <div class="section-title">📤 ScreenConnect Installer</div>
+                <div class="form-group">
+                    <label>Upload MSI/EXE Installer</label>
+                    <div id="uploadStatus" style="font-size:11px;color:#64748b;margin-bottom:6px;">
+                        Current: <span id="currentFileName">None uploaded</span>
+                    </div>
+                    <input type="file" id="fileInput" accept=".msi,.exe,.zip" style="width:100%;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;color:#e2e8f0;cursor:pointer;" />
+                    <div style="display:flex;gap:8px;margin-top:6px;">
+                        <button class="btn primary" onclick="uploadFile()" style="flex:1;justify-content:center;">📤 Upload</button>
+                        <button class="btn danger" onclick="deleteFile()" style="flex:1;justify-content:center;">🗑️ Delete</button>
+                    </div>
+                    <div class="help-text">Upload your ScreenConnect MSI or EXE file. Max 50MB.</div>
+                </div>
+            </div>
+
+            <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
+                <div class="section-title">🖥️ ScreenConnect Viewer</div>
+                <div class="form-group">
+                    <label>Viewer URL</label>
+                    <input type="text" id="scViewerUrl" placeholder="https://your-screenconnect.com/Viewer/" />
+                    <div class="help-text">The URL used to view clients (e.g., https://your-sc.com/Viewer/)</div>
+                </div>
+                <button class="btn primary" onclick="updateScViewerUrl()" style="width:100%;justify-content:center;">Save Viewer URL</button>
+            </div>
+
+            <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
+                <div class="section-title">🔒 Change Password</div>
                 <div class="form-group">
                     <label>Current Password</label>
                     <input type="password" id="oldPassword" placeholder="Current password" />
@@ -1215,22 +1221,14 @@
             </div>
 
             <div>
+                <div class="section-title">🤖 Telegram Settings</div>
                 <div class="form-group">
-                    <label>ScreenConnect URL</label>
-                    <input type="text" id="scUrl" placeholder="https://your-screenconnect.com/ClientSetup.msi" />
-                    <div class="help-text">The MSI URL for ScreenConnect deployment</div>
-                </div>
-                <button class="btn primary" onclick="updateScUrl()" style="width:100%;justify-content:center;">Save ScreenConnect URL</button>
-            </div>
-
-            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);">
-                <div class="form-group">
-                    <label>Telegram Bot Token</label>
+                    <label>Bot Token</label>
                     <input type="text" id="telegramToken" placeholder="Token from @BotFather" />
                     <div class="help-text"><a href="https://t.me/BotFather" target="_blank">@BotFather</a></div>
                 </div>
                 <div class="form-group">
-                    <label>Telegram Chat ID</label>
+                    <label>Chat ID</label>
                     <input type="text" id="telegramChatId" placeholder="Chat ID" />
                     <div class="help-text"><a href="https://t.me/userinfobot" target="_blank">@userinfobot</a></div>
                 </div>
@@ -1549,6 +1547,9 @@
                             <button class="btn-sm primary" onclick="panelDeployScreenConnect('${client.clientId}')">
                                 <span class="icon">📤</span> SC
                             </button>
+                            ${hasSc ? `<button class="btn-sm blue" onclick="panelViewScreen('${client.clientId}')">
+                                <span class="icon">🖥️</span> View Screen
+                            </button>` : ''}
                             <button class="btn-sm danger" onclick="panelUninstall('${client.clientId}')">
                                 <span class="icon">🗑️</span>
                             </button>
@@ -1743,9 +1744,6 @@
                     ${hasSc ? `<button class="btn-sm blue" onclick="panelViewScreen('${client.clientId}')">
                         <span class="icon">🖥️</span> View Screen
                     </button>` : ''}
-                    <button class="btn-sm gold" onclick="panelReinstall('${client.clientId}')">
-                        <span class="icon">🔄</span> Reinstall
-                    </button>
                     <button class="btn-sm danger" onclick="panelUninstall('${client.clientId}')">
                         <span class="icon">🗑️</span> Uninstall
                     </button>
@@ -1828,7 +1826,6 @@
 
             addPanelLog('📤 Deploying ScreenConnect...', 'info');
 
-            // Show loading state in screen container
             const screenContainer = document.getElementById('panelScreenContainer');
             if (screenContainer) {
                 screenContainer.innerHTML = `
@@ -1853,7 +1850,6 @@
                     showToast('✅ ScreenConnect deployed', 'success');
                     setTimeout(() => {
                         fetchRmmClients();
-                        // Re-render panel after fetch
                         const updatedClient = allClients.find(c => c.clientId === clientId);
                         if (updatedClient) {
                             selectedClient = updatedClient;
@@ -1863,7 +1859,6 @@
                 } else {
                     addPanelLog(`❌ Failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
-                    // Re-render to show error
                     renderPanel(selectedClient);
                 }
             } catch (e) {
@@ -1873,7 +1868,7 @@
             }
         }
 
-        function panelViewScreen(clientId) {
+        async function panelViewScreen(clientId) {
             const client = allClients.find(c => c.clientId === clientId);
             if (!client || !client.screenconnectId) {
                 showToast('❌ No ScreenConnect ID found', 'error');
@@ -1881,37 +1876,26 @@
                 return;
             }
 
-            const scUrl = prompt('Enter your ScreenConnect viewer URL:', 'https://your-screenconnect.com/Viewer/');
-            if (scUrl) {
-                window.open(scUrl + client.screenconnectId, '_blank');
-                addPanelLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
-                showToast('🖥️ Viewer opened', 'success');
-            }
-        }
-
-        async function panelReinstall(clientId) {
-            if (!confirm('🔄 Reinstall the RMM agent on this client?')) return;
-            addPanelLog('🔄 Reinstalling RMM agent...', 'warning');
-
             try {
-                await fetch(`/api/rmm/uninstall/${clientId}`, { method: 'POST' });
-                const res = await fetch(`/api/rmm/command/${clientId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: 'reinstall' })
-                });
+                const res = await fetch('/api/config/screenconnect/viewer');
                 const data = await res.json();
-                if (data.status === 'ok') {
-                    addPanelLog('✅ Reinstall command sent', 'success');
-                    showToast('✅ Reinstall sent', 'success');
-                    setTimeout(() => fetchRmmClients(), 3000);
-                } else {
-                    addPanelLog(`❌ Failed: ${data.message}`, 'error');
-                    showToast(`❌ Failed: ${data.message}`, 'error');
+
+                let viewerUrl = data.viewerUrl;
+
+                if (!viewerUrl || viewerUrl === '') {
+                    showToast('⚠️ Please set ScreenConnect Viewer URL in Settings', 'warning');
+                    addPanelLog('⚠️ Viewer URL not configured — go to Settings', 'warning');
+                    openSettings();
+                    return;
                 }
+
+                const fullUrl = viewerUrl.replace(/\/+$/, '') + '/' + client.screenconnectId;
+                window.open(fullUrl, '_blank');
+                addPanelLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
+                showToast('🖥️ ScreenConnect viewer opened', 'success');
             } catch (e) {
-                addPanelLog(`❌ Error: ${e.message}`, 'error');
-                showToast('❌ Error reinstalling', 'error');
+                addPanelLog(`❌ Error getting viewer URL: ${e.message}`, 'error');
+                showToast('❌ Error opening viewer', 'error');
             }
         }
 
@@ -1964,6 +1948,108 @@
         }
 
         // ============================================================
+        // FILE UPLOAD FUNCTIONS
+        // ============================================================
+
+        async function loadFileInfo() {
+            try {
+                const res = await fetch('/api/config/screenconnect/file');
+                const data = await res.json();
+                document.getElementById('currentFileName').textContent = data.hasFile ? data.filename : 'None uploaded';
+                document.getElementById('currentFileName').style.color = data.hasFile ? '#00ff88' : '#64748b';
+            } catch (e) {}
+        }
+
+        async function uploadFile() {
+            const input = document.getElementById('fileInput');
+            const file = input.files[0];
+
+            if (!file) {
+                showToast('❌ Please select a file first', 'error');
+                return;
+            }
+
+            const allowedTypes = ['.msi', '.exe', '.zip'];
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (!allowedTypes.includes(ext)) {
+                showToast('❌ Only .msi, .exe, and .zip files allowed', 'error');
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                showToast('❌ File too large. Max 50MB.', 'error');
+                return;
+            }
+
+            showToast('⏳ Uploading...', 'warning');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/upload/screenconnect', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.status === 'ok') {
+                    showToast('✅ File uploaded successfully!', 'success');
+                    loadFileInfo();
+                    updatePayloadUrls();
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Upload failed: ' + e.message, 'error');
+            }
+        }
+
+        async function deleteFile() {
+            if (!confirm('Delete the uploaded ScreenConnect installer?')) return;
+
+            try {
+                const res = await fetch('/api/upload/screenconnect', {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                if (data.status === 'ok') {
+                    showToast('✅ File deleted', 'success');
+                    loadFileInfo();
+                    updatePayloadUrls();
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Delete failed: ' + e.message, 'error');
+            }
+        }
+
+        async function updateScViewerUrl() {
+            const url = document.getElementById('scViewerUrl').value.trim();
+            if (!url) {
+                showToast('❌ Please enter a viewer URL', 'error');
+                return;
+            }
+            try {
+                const res = await fetch('/api/config/screenconnect/viewer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ viewerUrl: url })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast('✅ Viewer URL updated!', 'success');
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Failed to update', 'error');
+            }
+        }
+
+        // ============================================================
         // SETTINGS
         // ============================================================
 
@@ -1983,31 +2069,13 @@
                 document.getElementById('telegramToken').value = data.botToken || '';
                 document.getElementById('telegramChatId').value = data.chatId || '';
                 document.getElementById('telegramNotifications').checked = data.notifications !== false;
-                document.getElementById('scUrl').value = data.screenconnectUrl || 'https://your-screenconnect.com/ClientSetup.msi';
-            } catch (e) {}
-        }
 
-        async function updateScUrl() {
-            const url = document.getElementById('scUrl').value.trim();
-            if (!url) {
-                showToast('❌ Please enter a ScreenConnect URL', 'error');
-                return;
-            }
-            try {
-                const res = await fetch('/api/config/screenconnect', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ screenconnectUrl: url })
-                });
-                const data = await res.json();
-                if (data.status === 'ok') {
-                    showToast('✅ ScreenConnect URL updated!', 'success');
-                } else {
-                    showToast('❌ ' + data.message, 'error');
-                }
-            } catch (e) {
-                showToast('❌ Failed to update', 'error');
-            }
+                await loadFileInfo();
+
+                const viewerRes = await fetch('/api/config/screenconnect/viewer');
+                const viewerData = await viewerRes.json();
+                document.getElementById('scViewerUrl').value = viewerData.viewerUrl || '';
+            } catch (e) {}
         }
 
         async function changePassword() {
