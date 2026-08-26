@@ -366,7 +366,7 @@ function Execute-Command {
 }
 
 # ============================================================
-# PHASE 7: MAIN HEARTBEAT LOOP (STABLE)
+# PHASE 7: MAIN HEARTBEAT LOOP (STABLE) — not used, kept for reference
 # ============================================================
 
 function Send-Report {
@@ -402,7 +402,7 @@ function Send-Report {
         $req.ContentLength = $bytes.Length
         $req.Timeout = 20000
         $req.UserAgent = "CipherAnonRMM/5.0"
-        $req.Proxy = $null  # Bypass proxy for reliability
+        $req.Proxy = $null
         
         $stream = $req.GetRequestStream()
         $stream.Write($bytes, 0, $bytes.Length)
@@ -438,7 +438,6 @@ function Start-RmmLoop {
                     $retryCount++
                     Write-Log "❌ Registration failed (attempt $retryCount/$maxRetries)"
                     if ($retryCount -ge $maxRetries) {
-                        # Try to re-register with a different method
                         Write-Log "Max retries reached. Re-initializing..."
                         $retryCount = 0
                     }
@@ -658,7 +657,9 @@ $jobScript = {
                         Write-Log "✅ Command response sent"
                     }
                 }
-            } catch {}
+            } catch {
+                # Command check failed - silent
+            }
             
         } catch {
             Write-Log "⚠️ Loop error: $_"
@@ -685,7 +686,6 @@ if ($job) {
     Write-Log "  Get-Content '$RMM_LOGFILE' -Tail 20"
     Write-Log ""
     Write-Log "If not showing in dashboard, run diagnostic:"
-    Write-Log "  Test the server connection with this PowerShell command:"
     Write-Log "  try { (New-Object Net.WebClient).DownloadString('$BASE_URL/health') } catch { 'Failed' }"
     Write-Log "============================================"
 } else {
