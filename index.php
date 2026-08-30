@@ -136,10 +136,6 @@ $user = $stmt->fetch();
             font-size: 1rem;
             color: #c084fc;
         }
-        .platform-badge {
-            color: #10b981;
-            font-weight: 600;
-        }
         .log-platform {
             color: #10b981;
             font-weight: 500;
@@ -147,6 +143,123 @@ $user = $stmt->fetch();
         .log-network {
             color: #64748b;
             font-size: 0.75rem;
+        }
+        .profile-toggle {
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 4px 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            transition: 0.25s;
+        }
+        .profile-toggle:hover {
+            border-color: #a855f755;
+            color: #c084fc;
+        }
+        .profile-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .profile-modal.active {
+            display: flex;
+        }
+        .profile-modal .modal-box {
+            max-width: 440px;
+            width: 100%;
+            padding: 36px 32px;
+            background: rgba(11, 14, 26, 0.95);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+        }
+        .profile-modal .modal-box h2 {
+            margin-bottom: 20px;
+            color: #eef2ff;
+        }
+        .profile-modal .modal-box input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #f0f4ff;
+        }
+        .profile-modal .modal-box input:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+        .profile-modal .modal-box button {
+            background: linear-gradient(135deg, #a855f7, #d946ef);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+        .profile-modal .modal-box .close-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 40px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .profile-modal .modal-box .close-btn:hover {
+            border-color: #ef444455;
+            color: #fca5a5;
+        }
+        .profile-modal .modal-box .pwd-status {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+        .profile-modal .modal-box .pwd-status.success {
+            color: #86efac;
+            background: rgba(34,197,94,0.1);
+        }
+        .profile-modal .modal-box .pwd-status.error {
+            color: #fca5a5;
+            background: rgba(239,68,68,0.1);
+        }
+        .file-input-wrap {
+            margin-bottom: 14px;
+        }
+        .file-input-wrap label {
+            display: block;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.25s;
+        }
+        .file-input-wrap label:hover {
+            border-color: #a855f755;
+            color: #c084fc;
+        }
+        .file-input-wrap input[type="file"] {
+            display: none;
+        }
+        .file-input-wrap .file-name {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+            text-align: center;
         }
     </style>
 </head>
@@ -163,6 +276,7 @@ $user = $stmt->fetch();
                     <?= ($user['telegram_connected'] ?? 0) ? '📡 Bot Connected' : '📡 Bot Disconnected' ?>
                 </span>
                 <span class="user-badge">👤 <?= htmlspecialchars($_SESSION['username']) ?></span>
+                <span class="profile-toggle" onclick="openProfile()">⚙️ Profile</span>
                 <?php if ($_SESSION['is_admin']): ?>
                     <a href="admin.php" class="admin-link">⚙️ Admin</a>
                 <?php endif; ?>
@@ -197,6 +311,11 @@ $user = $stmt->fetch();
             <h2>📢 Launch Campaign</h2>
             <input type="text" id="campaign" placeholder="Campaign Name" value="ZerPes #<?= rand(100, 999) ?>">
             <textarea id="ad_content" placeholder="Your ad copy here... 💥"></textarea>
+            <div class="file-input-wrap">
+                <label for="adImage">📎 Click to attach image (optional)</label>
+                <input type="file" id="adImage" accept="image/*">
+                <div class="file-name" id="fileName">No image selected</div>
+            </div>
             <input type="url" id="target_url" placeholder="Target URL (e.g., https://your.site)">
             <button id="fireBtn" onclick="sendAd()">🚀 Spread Ads</button>
             <div id="statusMsg" class="status"></div>
@@ -227,7 +346,20 @@ $user = $stmt->fetch();
             </div>
         </section>
 
-        <footer class="footer">ZerPes · v2.1 · Clean Platform Spreader</footer>
+        <footer class="footer">ZerPes · v2.2 · Clean Platform Spreader</footer>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="profile-modal" id="profileModal">
+        <div class="modal-box">
+            <h2>🔐 Change Password</h2>
+            <div id="pwdStatus" class="pwd-status" style="display:none;"></div>
+            <input type="password" id="oldPassword" placeholder="Current Password">
+            <input type="password" id="newPassword" placeholder="New Password (min 6 chars)">
+            <input type="password" id="confirmPassword" placeholder="Confirm New Password">
+            <button onclick="changePassword()">Update Password</button>
+            <button class="close-btn" onclick="closeProfile()">Close</button>
+        </div>
     </div>
 
     <script>
@@ -293,6 +425,80 @@ $user = $stmt->fetch();
             statusDiv.style.color = '#fca5a5';
         });
     }
+
+    // Profile functions
+    function openProfile() {
+        document.getElementById('profileModal').classList.add('active');
+        document.getElementById('pwdStatus').style.display = 'none';
+        document.getElementById('oldPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }
+
+    function closeProfile() {
+        document.getElementById('profileModal').classList.remove('active');
+    }
+
+    function changePassword() {
+        const oldPwd = document.getElementById('oldPassword').value;
+        const newPwd = document.getElementById('newPassword').value;
+        const confirmPwd = document.getElementById('confirmPassword').value;
+        const statusDiv = document.getElementById('pwdStatus');
+
+        if (!oldPwd || !newPwd || !confirmPwd) {
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'pwd-status error';
+            statusDiv.innerText = '❌ All fields required';
+            return;
+        }
+
+        if (newPwd.length < 6) {
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'pwd-status error';
+            statusDiv.innerText = '❌ New password must be at least 6 characters';
+            return;
+        }
+
+        if (newPwd !== confirmPwd) {
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'pwd-status error';
+            statusDiv.innerText = '❌ Passwords do not match';
+            return;
+        }
+
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'pwd-status';
+        statusDiv.innerText = '⏳ Updating...';
+        statusDiv.style.color = '#c084fc';
+
+        const formData = new FormData();
+        formData.append('action', 'change_password');
+        formData.append('old_password', oldPwd);
+        formData.append('new_password', newPwd);
+
+        fetch('backend.php', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success') {
+                statusDiv.className = 'pwd-status success';
+                statusDiv.innerText = '✅ ' + data.message;
+                setTimeout(closeProfile, 1500);
+            } else {
+                statusDiv.className = 'pwd-status error';
+                statusDiv.innerText = '❌ ' + data.error;
+            }
+        })
+        .catch(err => {
+            statusDiv.className = 'pwd-status error';
+            statusDiv.innerText = '⚠️ Error: ' + err.message;
+        });
+    }
+
+    // File input handler
+    document.getElementById('adImage').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No image selected';
+        document.getElementById('fileName').innerText = fileName;
+    });
     </script>
 </body>
 </html>
