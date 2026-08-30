@@ -1,12 +1,12 @@
 <?php
-// backend.php — Fake ad network processing, no Zernio
+// backend.php — Clean platform-only, no stats, no Reddit
 header('Content-Type: application/json');
 require_once 'config.php';
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // ============================================
-// SEND AD — Fake processing with realistic network logs
+// SEND AD — No stats, long random processing
 // ============================================
 if ($action === 'send_ad') {
     $user_id = $_SESSION['user_id'] ?? 0;
@@ -19,60 +19,62 @@ if ($action === 'send_ad') {
         exit;
     }
 
-    // Fake ad networks
+    // Get user's platform from license
+    $stmt = $db->prepare("SELECT platform, platform_username FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+
+    $platform = $user['platform'] ?? 'Instagram';
+    $username = $user['platform_username'] ?? '@asiwajuwon';
+
+    // Ad networks (NO REDDIT)
     $networks = [
-        'Google Ads', 'Meta Ads', 'TikTok Ads', 'Twitter Ads', 
-        'LinkedIn Ads', 'Snapchat Ads', 'Pinterest Ads', 
-        'Reddit Ads', 'Taboola', 'Outbrain'
+        'Google Ads', 'Meta Ads', 'TikTok Ads', 'Twitter Ads',
+        'LinkedIn Ads', 'Snapchat Ads', 'Pinterest Ads',
+        'Taboola', 'Outbrain'
     ];
     $network = $networks[array_rand($networks)];
 
-    // Generate realistic fake stats
-    $impressions = rand(150, 8500);
-    $clicks = rand(12, intval($impressions * 0.08));
-    $ctr = round(($clicks / $impressions) * 100, 2);
-    $cost = round(($clicks * rand(15, 85)) / 100, 2);
+    // Random delay: 5, 7, 15, 30 minutes (in seconds)
+    $delays = [300, 420, 900, 360, 1800]; // 5min, 7min, 15min, 6min, 30min
+    $delay = $delays[array_rand($delays)];
 
-    // Simulate processing delay (3-10 seconds) — feels real
-    $delay = rand(4, 10);
+    // Simulate processing
     sleep($delay);
 
-    // Build realistic response
+    // Build response — clean, no stats
     $response_data = [
+        'platform' => $platform,
+        'username' => $username,
         'network' => $network,
-        'impressions' => $impressions,
-        'clicks' => $clicks,
-        'ctr' => $ctr . '%',
-        'cost' => '$' . $cost,
         'status' => 'delivered',
         'timestamp' => date('Y-m-d H:i:s'),
-        'message' => "✅ Ad delivered via {$network} — {$impressions} impressions, {$clicks} clicks, CTR {$ctr}%"
+        'message' => "✅ Spread ads via {$platform} | User Ad Account: {$username}"
     ];
 
     $status = 'success';
     $response_log = json_encode($response_data);
 
-    // Log to database
-    $stmt = $db->prepare("INSERT INTO logs (user_id, campaign_name, ad_content, target_url, network, impressions, clicks, ctr, status, response) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$user_id, $campaign, $content, $target, $network, $impressions, $clicks, $ctr, $status, $response_log]);
+    // Log to database (no stats)
+    $stmt = $db->prepare("INSERT INTO logs (user_id, campaign_name, ad_content, target_url, platform, status, response) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$user_id, $campaign, $content, $target, $platform, $status, $response_log]);
 
     // Send Telegram notification if connected
     $stmt = $db->prepare("SELECT telegram_bot_token, telegram_chat_id FROM users WHERE id = ? AND telegram_connected = 1");
     $stmt->execute([$user_id]);
-    $user = $stmt->fetch();
+    $telegram_user = $stmt->fetch();
 
-    if ($user) {
+    if ($telegram_user) {
         $telegram_msg = "📢 *ZerPes Ad Delivered!*\n\n";
         $telegram_msg .= "📋 Campaign: {$campaign}\n";
+        $telegram_msg .= "📱 Platform: {$platform}\n";
+        $telegram_msg .= "👤 Account: {$username}\n";
         $telegram_msg .= "🌐 Network: {$network}\n";
-        $telegram_msg .= "👁️ Impressions: {$impressions}\n";
-        $telegram_msg .= "🖱️ Clicks: {$clicks}\n";
-        $telegram_msg .= "📊 CTR: {$ctr}%\n";
-        $telegram_msg .= "💰 Cost: \${$cost}\n";
-        $telegram_msg .= "🔗 Target: {$target}";
+        $telegram_msg .= "🔗 Target: {$target}\n";
+        $telegram_msg .= "⏱️ Time: " . round($delay / 60) . " minutes";
 
-        $url = "https://api.telegram.org/bot{$user['telegram_bot_token']}/sendMessage";
-        $payload = ['chat_id' => $user['telegram_chat_id'], 'text' => $telegram_msg, 'parse_mode' => 'Markdown'];
+        $url = "https://api.telegram.org/bot{$telegram_user['telegram_bot_token']}/sendMessage";
+        $payload = ['chat_id' => $telegram_user['telegram_chat_id'], 'text' => $telegram_msg, 'parse_mode' => 'Markdown'];
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -86,15 +88,17 @@ if ($action === 'send_ad') {
 
     echo json_encode([
         'status' => 'success',
-        'response' => $response_data['message'],
-        'details' => $response_data,
-        'delay' => $delay
+        'platform' => $platform,
+        'username' => $username,
+        'network' => $network,
+        'message' => $response_data['message'],
+        'delay_minutes' => round($delay / 60)
     ]);
     exit;
 }
 
 // ============================================
-// GET LOGS
+// GET LOGS (Simplified)
 // ============================================
 if ($action === 'get_logs') {
     $user_id = $_SESSION['user_id'] ?? 0;
@@ -108,14 +112,12 @@ if ($action === 'get_logs') {
     }
     $logs = $stmt->fetchAll();
 
-    // Parse response JSON for display
+    // Parse response JSON
     foreach ($logs as &$log) {
         $response_data = json_decode($log['response'], true);
         if ($response_data) {
-            $log['network'] = $response_data['network'] ?? $log['network'] ?? 'Unknown';
-            $log['impressions'] = $response_data['impressions'] ?? $log['impressions'] ?? 0;
-            $log['clicks'] = $response_data['clicks'] ?? $log['clicks'] ?? 0;
-            $log['ctr'] = $response_data['ctr'] ?? $log['ctr'] ?? '0%';
+            $log['platform'] = $response_data['platform'] ?? $log['platform'] ?? 'Unknown';
+            $log['network'] = $response_data['network'] ?? 'Unknown';
         }
     }
 
