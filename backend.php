@@ -1,25 +1,44 @@
 <?php
-// backend.php — Clean platform-only, no stats, no Reddit
+// backend.php — Fixed timeout, image upload, no stats
 header('Content-Type: application/json');
 require_once 'config.php';
+
+// Prevent timeout for long processing
+set_time_limit(0);
+ignore_user_abort(true);
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // ============================================
-// SEND AD — No stats, long random processing
+// SEND AD — Long processing with image support
 // ============================================
 if ($action === 'send_ad') {
     $user_id = $_SESSION['user_id'] ?? 0;
     $campaign = trim($_POST['campaign'] ?? 'ZerPes Campaign');
     $content = trim($_POST['content'] ?? '');
     $target = trim($_POST['target'] ?? '');
+    $image_path = '';
+
+    // Handle image upload
+    if (isset($_FILES['ad_image']) && $_FILES['ad_image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = __DIR__ . '/uploads/';
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+        
+        $ext = pathinfo($_FILES['ad_image']['name'], PATHINFO_EXTENSION);
+        $filename = 'ad_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
+        $target_path = $upload_dir . $filename;
+        
+        if (move_uploaded_file($_FILES['ad_image']['tmp_name'], $target_path)) {
+            $image_path = 'uploads/' . $filename;
+        }
+    }
 
     if (empty($content) || empty($target)) {
         echo json_encode(['error' => 'Content and target URL required']);
         exit;
     }
 
-    // Get user's platform from license
+    // Get user platform
     $stmt = $db->prepare("SELECT platform, platform_username FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch();
@@ -35,14 +54,11 @@ if ($action === 'send_ad') {
     ];
     $network = $networks[array_rand($networks)];
 
-    // Random delay: 5, 7, 15, 30 minutes (in seconds)
-    $delays = [300, 420, 900, 360, 1800]; // 5min, 7min, 15min, 6min, 30min
-    $delay = $delays[array_rand($delays)];
-
-    // Simulate processing
+    // Random delay: 30-120 seconds (works without timeout)
+    $delay = rand(30, 120);
     sleep($delay);
 
-    // Build response — clean, no stats
+    // Build response
     $response_data = [
         'platform' => $platform,
         'username' => $username,
@@ -55,11 +71,11 @@ if ($action === 'send_ad') {
     $status = 'success';
     $response_log = json_encode($response_data);
 
-    // Log to database (no stats)
-    $stmt = $db->prepare("INSERT INTO logs (user_id, campaign_name, ad_content, target_url, platform, status, response) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$user_id, $campaign, $content, $target, $platform, $status, $response_log]);
+    // Log to database
+    $stmt = $db->prepare("INSERT INTO logs (user_id, campaign_name, ad_content, image_path, target_url, platform, status, response) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$user_id, $campaign, $content, $image_path, $target, $platform, $status, $response_log]);
 
-    // Send Telegram notification if connected
+    // Send Telegram
     $stmt = $db->prepare("SELECT telegram_bot_token, telegram_chat_id FROM users WHERE id = ? AND telegram_connected = 1");
     $stmt->execute([$user_id]);
     $telegram_user = $stmt->fetch();
@@ -71,7 +87,7 @@ if ($action === 'send_ad') {
         $telegram_msg .= "👤 Account: {$username}\n";
         $telegram_msg .= "🌐 Network: {$network}\n";
         $telegram_msg .= "🔗 Target: {$target}\n";
-        $telegram_msg .= "⏱️ Time: " . round($delay / 60) . " minutes";
+        $telegram_msg .= "⏱️ Time: " . round($delay / 60, 1) . " minutes";
 
         $url = "https://api.telegram.org/bot{$telegram_user['telegram_bot_token']}/sendMessage";
         $payload = ['chat_id' => $telegram_user['telegram_chat_id'], 'text' => $telegram_msg, 'parse_mode' => 'Markdown'];
@@ -91,14 +107,50 @@ if ($action === 'send_ad') {
         'platform' => $platform,
         'username' => $username,
         'network' => $network,
+        'image' => $image_path,
         'message' => $response_data['message'],
-        'delay_minutes' => round($delay / 60)
+        'delay_minutes' => round($delay / 60, 1)
     ]);
     exit;
 }
 
 // ============================================
-// GET LOGS (Simplified)
+// CHANGE PASSWORD
+// ============================================
+if ($action === 'change_password') {
+    $user_id = $_SESSION['user_id'] ?? 0;
+    $old_password = $_POST['old_password'] ?? '';
+    $new_password = $_POST['new_password'] ?? '';
+
+    if (empty($old_password) || empty($new_password)) {
+        echo json_encode(['error' => 'All fields required']);
+        exit;
+    }
+
+    if (strlen($new_password) < 6) {
+        echo json_encode(['error' => 'New password must be at least 6 characters']);
+        exit;
+    }
+
+    $stmt = $db->prepare("SELECT password_hash FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch();
+
+    if (!$user || !password_verify($old_password, $user['password_hash'])) {
+        echo json_encode(['error' => 'Current password is incorrect']);
+        exit;
+    }
+
+    $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
+    $stmt = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
+    $stmt->execute([$new_hash, $user_id]);
+
+    echo json_encode(['status' => 'success', 'message' => 'Password changed successfully!']);
+    exit;
+}
+
+// ============================================
+// GET LOGS
 // ============================================
 if ($action === 'get_logs') {
     $user_id = $_SESSION['user_id'] ?? 0;
@@ -112,12 +164,10 @@ if ($action === 'get_logs') {
     }
     $logs = $stmt->fetchAll();
 
-    // Parse response JSON
     foreach ($logs as &$log) {
         $response_data = json_decode($log['response'], true);
         if ($response_data) {
-            $log['platform'] = $response_data['platform'] ?? $log['platform'] ?? 'Unknown';
-            $log['network'] = $response_data['network'] ?? 'Unknown';
+            $log['network'] = $response_data['network'] ?? '';
         }
     }
 
@@ -162,7 +212,7 @@ if ($action === 'connect_telegram') {
 }
 
 // ============================================
-// VERIFY LICENSE + GENERATE PLATFORM
+// VERIFY LICENSE
 // ============================================
 if ($action === 'verify_license') {
     $user_id = $_SESSION['user_id'] ?? 0;
