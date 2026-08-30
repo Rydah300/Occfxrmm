@@ -1,8 +1,7 @@
 <?php
-// config.php — SQLite version (built into PHP)
+// config.php — SQLite + License + Telegram
 session_start();
 
-// Database file
 define('DB_PATH', __DIR__ . '/database.sqlite');
 
 try {
@@ -13,18 +12,25 @@ try {
     die(json_encode(['error' => 'DB failed: ' . $e->getMessage()]));
 }
 
-// Create users table
+// Create tables
 $db->exec("CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     is_admin INTEGER DEFAULT 0,
+    telegram_bot_token TEXT,
+    telegram_chat_id TEXT,
+    telegram_connected INTEGER DEFAULT 0,
+    license_key TEXT,
+    platform TEXT,
+    platform_username TEXT,
+    credits INTEGER DEFAULT 999999,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )");
 
-// Create logs table
 $db->exec("CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     campaign_name TEXT,
     ad_content TEXT,
     target_url TEXT,
@@ -33,19 +39,19 @@ $db->exec("CREATE TABLE IF NOT EXISTS logs (
     sent_at DATETIME DEFAULT CURRENT_TIMESTAMP
 )");
 
-// Default admin user (only if no users exist)
+// Default admin
 $stmt = $db->query("SELECT COUNT(*) FROM users");
 if ($stmt->fetchColumn() == 0) {
     $default_pass = password_hash('Admin2026!', PASSWORD_DEFAULT);
-    $db->exec("INSERT INTO users (username, password_hash, is_admin) VALUES ('admin', '$default_pass', 1)");
+    $db->exec("INSERT INTO users (username, password_hash, is_admin, credits) VALUES ('admin', '$default_pass', 1, 999999)");
 }
 
-// Zernio API config (from Railway env)
-$zernio_key = getenv('ZERNIO_API_KEY');
-$zernio_url = getenv('ZERNIO_API_URL');
+// Zernio API
+define('ZERNIO_API_KEY', getenv('ZERNIO_API_KEY') ?: '');
+define('ZERNIO_API_URL', getenv('ZERNIO_API_URL') ?: 'https://api.zernio.com/v1');
 
-define('ZERNIO_API_KEY', $zernio_key ?: '');
-define('ZERNIO_API_URL', $zernio_url ?: 'https://api.zernio.com/v1');
+// License key
+define('VALID_LICENSE', 'AIO-A0J8-OHA1-WLP3');
 
 // Session
 ini_set('session.gc_maxlifetime', 86400);
