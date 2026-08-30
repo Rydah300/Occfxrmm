@@ -69,6 +69,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
         .delete-link { color: #ef4444; text-decoration: none; font-size: 0.8rem; }
         .back-link { color: #94a3b8; text-decoration: none; }
         .unlimited-badge { color: #10b981; font-size: 0.75rem; }
+        .platform-info { color: #c084fc; font-size: 0.75rem; }
     </style>
 </head>
 <body style="background:radial-gradient(circle at 20% 30%, #0b0e1a, #03050b); min-height:100vh; padding:20px;">
@@ -104,7 +105,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
                             <?= ($u['telegram_connected'] ?? 0) ? '📡 Bot' : '📡 No Bot' ?>
                         </span>
                         <?php if ($u['platform']): ?>
-                            <span style="color:#c084fc;font-size:0.7rem;">📱 <?= $u['platform'] ?> <?= $u['platform_username'] ?></span>
+                            <span class="platform-info">📱 <?= $u['platform'] ?> <?= $u['platform_username'] ?></span>
                         <?php endif; ?>
                         <span class="unlimited-badge">♾️ Unlimited</span>
                     </span>
