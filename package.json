@@ -1,8 +1,8 @@
 {
   "name": "zerpes-ads-spreader",
-  "version": "1.0.0",
-  "description": "ZerPes Ads Spreader",
+  "version": "2.3.0",
+  "description": "ZerPes Ads Spreader — Clean URLs",
   "scripts": {
-    "start": "php -S 0.0.0.0:${PORT:-8080} -t ."
+    "start": "php -S 0.0.0.0:${PORT:-8080} router.php"
   }
 }
