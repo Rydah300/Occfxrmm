@@ -1,5 +1,4 @@
 <?php
-// index.php — ZerPes dashboard with credits + Telegram
 require_once 'auth.php';
 requireLogin();
 
@@ -10,7 +9,7 @@ if (isset($_GET['logout'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$stmt = $db->prepare("SELECT username, credits, telegram_connected, platform, platform_username FROM users WHERE id = ?");
+$stmt = $db->prepare("SELECT username, telegram_connected, platform, platform_username FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 ?>
@@ -24,11 +23,11 @@ $user = $stmt->fetch();
     <script src="public/script.js" defer></script>
     <style>
         .credit-badge {
-            background: linear-gradient(135deg, #f59e0b, #f97316);
+            background: linear-gradient(135deg, #10b981, #059669);
             padding: 4px 16px;
             border-radius: 40px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #fff;
         }
         .telegram-status {
@@ -115,6 +114,29 @@ $user = $stmt->fetch();
             font-weight: 700;
             cursor: pointer;
         }
+        .log-details {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .log-details span {
+            background: rgba(255,255,255,0.04);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .log-details .imp { color: #f59e0b; }
+        .log-details .clk { color: #3b82f6; }
+        .log-details .ctr { color: #10b981; }
+        .log-details .net { color: #c084fc; }
+        .processing-status {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
     </style>
 </head>
 <body>
@@ -125,7 +147,7 @@ $user = $stmt->fetch();
                 <span class="header-tag">Ads Spreader</span>
             </div>
             <div class="header-right">
-                <span class="credit-badge">⚡ <?= $user['credits'] ?? 0 ?> credits</span>
+                <span class="credit-badge">♾️ Unlimited</span>
                 <span class="telegram-status <?= ($user['telegram_connected'] ?? 0) ? 'connected' : 'disconnected' ?>">
                     <?= ($user['telegram_connected'] ?? 0) ? '📡 Bot Connected' : '📡 Bot Disconnected' ?>
                 </span>
@@ -165,8 +187,9 @@ $user = $stmt->fetch();
             <input type="text" id="campaign" placeholder="Campaign Name" value="ZerPes #<?= rand(100, 999) ?>">
             <textarea id="ad_content" placeholder="Your ad copy here... 💥"></textarea>
             <input type="url" id="target_url" placeholder="Target URL (e.g., https://your.site)">
-            <button id="fireBtn" onclick="sendAd()">🚀 Spread via Zernio</button>
+            <button id="fireBtn" onclick="sendAd()">🚀 Spread to Networks</button>
             <div id="statusMsg" class="status"></div>
+            <div id="processingDetails" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:12px;font-size:0.9rem;color:#94a3b8;"></div>
         </section>
 
         <!-- Stats -->
@@ -177,11 +200,11 @@ $user = $stmt->fetch();
             </div>
             <div class="stat-card">
                 <span class="label">Success Rate</span>
-                <span class="value" id="successRate">0%</span>
+                <span class="value" id="successRate">100%</span>
             </div>
             <div class="stat-card">
-                <span class="label">Credits Left</span>
-                <span class="value" id="creditsLeft"><?= $user['credits'] ?? 0 ?></span>
+                <span class="label">Credits</span>
+                <span class="value" style="font-size:1.8rem;">♾️</span>
             </div>
         </section>
 
@@ -189,11 +212,11 @@ $user = $stmt->fetch();
         <section class="log-section glass">
             <h2>📋 Process Log</h2>
             <div id="logContainer" class="log-container">
-                <div class="log-entry empty">No activity yet. Fire some ads, baddie.</div>
+                <div class="log-entry empty">No activity yet. Launch a campaign, baddie.</div>
             </div>
         </section>
 
-        <footer class="footer">ZerPes · Powered by Zernio API</footer>
+        <footer class="footer">ZerPes · v2.0 · Multi-Network Ads</footer>
     </div>
 
     <script>
@@ -208,12 +231,11 @@ $user = $stmt->fetch();
         })
         .then(r => r.json())
         .then(data => {
+            display.style.display = 'block';
             if (data.status === 'success') {
-                display.style.display = 'block';
                 display.innerHTML = '✅ ' + data.message;
                 display.style.borderLeftColor = '#10b981';
             } else {
-                display.style.display = 'block';
                 display.innerHTML = '❌ ' + data.error;
                 display.style.borderLeftColor = '#ef4444';
             }
