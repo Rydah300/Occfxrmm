@@ -10,7 +10,7 @@
         }
     });
 
-    // Send Ad — with image upload, long processing
+    // Send Ad
     window.sendAd = function() {
         const campaign = document.getElementById('campaign').value.trim() || 'ZerPes Campaign';
         const content = document.getElementById('ad_content').value.trim();
@@ -34,7 +34,6 @@
             return;
         }
 
-        // Show processing
         statusDiv.className = 'status loading';
         statusDiv.innerText = '⏳ Processing...';
         statusDiv.style.display = 'block';
@@ -61,7 +60,7 @@
 
         const startTime = Date.now();
 
-        fetch('backend.php', { method: 'POST', body: formData })
+        fetch('/backend', { method: 'POST', body: formData })
         .then(r => r.json())
         .then(data => {
             btn.disabled = false;
@@ -104,7 +103,7 @@
 
     // Fetch logs
     function fetchLogs() {
-        fetch('backend.php?action=get_logs')
+        fetch('/backend?action=get_logs')
         .then(r => r.json())
         .then(logs => {
             const container = document.getElementById('logContainer');
