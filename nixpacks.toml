@@ -1,8 +1,14 @@
-[phases.setup]
-nixPkgs = ["php83", "php83Extensions.pdo_pgsql", "php83Extensions.curl"]
+FROM php:8.2-cli-bullseye
 
-[phases.install]
-cmds = ["php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\""]
+# Install PostgreSQL driver
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo_pgsql
 
-[start]
-cmd = "php -S 0.0.0.0:$PORT -t ."
+# Copy all files
+COPY . /app
+
+WORKDIR /app
+
+# Start PHP server
+CMD php -S 0.0.0.0:8080 -t /app
