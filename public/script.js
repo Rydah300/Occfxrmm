@@ -10,11 +10,12 @@
         }
     });
 
-    // Send Ad — Long processing, clean platform display
+    // Send Ad — with image upload, long processing
     window.sendAd = function() {
         const campaign = document.getElementById('campaign').value.trim() || 'ZerPes Campaign';
         const content = document.getElementById('ad_content').value.trim();
         const target = document.getElementById('target_url').value.trim();
+        const imageFile = document.getElementById('adImage').files[0];
         const statusDiv = document.getElementById('statusMsg');
         const detailsDiv = document.getElementById('processingDetails');
         const btn = document.getElementById('fireBtn');
@@ -33,7 +34,7 @@
             return;
         }
 
-        // Show processing — simple and clean
+        // Show processing
         statusDiv.className = 'status loading';
         statusDiv.innerText = '⏳ Processing...';
         statusDiv.style.display = 'block';
@@ -42,7 +43,7 @@
             <div class="processing-status">
                 <div class="spinner"></div>
                 <span class="status-message">Spreading ads across networks...</span>
-                <div style="margin-top:8px;font-size:0.8rem;color:#64748b;">This may take several minutes</div>
+                <div style="margin-top:8px;font-size:0.8rem;color:#64748b;">This may take a minute</div>
             </div>
         `;
 
@@ -54,6 +55,9 @@
         formData.append('campaign', campaign);
         formData.append('content', content);
         formData.append('target', target);
+        if (imageFile) {
+            formData.append('ad_image', imageFile);
+        }
 
         const startTime = Date.now();
 
@@ -67,6 +71,10 @@
                 const elapsed = Math.round((Date.now() - startTime) / 60000);
                 statusDiv.className = 'status success';
                 statusDiv.innerText = '✅ ' + data.message;
+                let imageHtml = '';
+                if (data.image) {
+                    imageHtml = `<div style="margin-top:6px;"><img src="${data.image}" style="max-width:150px;max-height:150px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);"></div>`;
+                }
                 detailsDiv.innerHTML = `
                     <div style="padding:12px 16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.1);border-radius:12px;text-align:center;">
                         <div style="font-size:1rem;color:#86efac;">
@@ -75,6 +83,7 @@
                         <div style="font-size:0.8rem;color:#64748b;margin-top:4px;">
                             User Ad Account: ${data.username} • ${data.network} • ${elapsed}m
                         </div>
+                        ${imageHtml}
                     </div>
                 `;
             } else {
@@ -93,7 +102,7 @@
         });
     };
 
-    // Fetch logs — clean display
+    // Fetch logs
     function fetchLogs() {
         fetch('backend.php?action=get_logs')
         .then(r => r.json())
@@ -114,6 +123,7 @@
                 entry.className = 'log-entry ' + log.status;
                 const platform = log.platform || 'Unknown';
                 const network = log.network || '';
+                const imageHtml = log.image_path ? `<img src="${log.image_path}" style="max-width:60px;max-height:60px;border-radius:4px;vertical-align:middle;margin-left:8px;">` : '';
                 entry.innerHTML = `
                     <div style="width:100%;">
                         <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;">
@@ -121,6 +131,7 @@
                                 <strong>${escapeHtml(log.campaign_name)}</strong>
                                 <span class="log-platform">✅ ${escapeHtml(platform)}</span>
                                 <span class="log-network">${escapeHtml(network)}</span>
+                                ${imageHtml}
                             </span>
                             <span style="font-size:0.7rem;color:#64748b;">${escapeHtml(log.sent_at)}</span>
                         </div>
