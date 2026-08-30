@@ -10,7 +10,7 @@
         }
     });
 
-    // Send Ad — with realistic processing
+    // Send Ad — Long processing, clean platform display
     window.sendAd = function() {
         const campaign = document.getElementById('campaign').value.trim() || 'ZerPes Campaign';
         const content = document.getElementById('ad_content').value.trim();
@@ -33,37 +33,21 @@
             return;
         }
 
-        // Show processing
+        // Show processing — simple and clean
         statusDiv.className = 'status loading';
-        statusDiv.innerText = '⏳ Connecting to ad networks...';
+        statusDiv.innerText = '⏳ Processing...';
         statusDiv.style.display = 'block';
         detailsDiv.style.display = 'block';
         detailsDiv.innerHTML = `
             <div class="processing-status">
-                🔄 Scanning ad inventory...<br>
-                📡 Connecting to networks...
+                <div class="spinner"></div>
+                <span class="status-message">Spreading ads across networks...</span>
+                <div style="margin-top:8px;font-size:0.8rem;color:#64748b;">This may take several minutes</div>
             </div>
         `;
 
         btn.disabled = true;
         btn.style.opacity = '0.6';
-
-        // Simulate network progress updates
-        let step = 0;
-        const steps = [
-            '🔄 Scanning ad inventory...',
-            '📡 Connecting to networks...',
-            '📤 Uploading campaign data...',
-            '⚡ Distributing across networks...',
-            '📊 Aggregating results...'
-        ];
-
-        const interval = setInterval(() => {
-            if (step < steps.length) {
-                detailsDiv.innerHTML = `<div class="processing-status">${steps[step]}</div>`;
-                step++;
-            }
-        }, 1500);
 
         const formData = new FormData();
         formData.append('action', 'send_ad');
@@ -71,39 +55,36 @@
         formData.append('content', content);
         formData.append('target', target);
 
+        const startTime = Date.now();
+
         fetch('backend.php', { method: 'POST', body: formData })
         .then(r => r.json())
         .then(data => {
-            clearInterval(interval);
             btn.disabled = false;
             btn.style.opacity = '1';
-            detailsDiv.style.display = 'none';
 
             if (data.status === 'success') {
+                const elapsed = Math.round((Date.now() - startTime) / 60000);
                 statusDiv.className = 'status success';
-                statusDiv.innerText = '✅ ' + data.response;
-                // Show detailed stats
-                if (data.details) {
-                    detailsDiv.style.display = 'block';
-                    detailsDiv.innerHTML = `
-                        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.85rem;">
-                            <span style="color:#c084fc;">🌐 ${data.details.network}</span>
-                            <span style="color:#f59e0b;">👁️ ${data.details.impressions.toLocaleString()}</span>
-                            <span style="color:#3b82f6;">🖱️ ${data.details.clicks.toLocaleString()}</span>
-                            <span style="color:#10b981;">📊 ${data.details.ctr}</span>
-                            <span style="color:#94a3b8;">💰 ${data.details.cost || 'N/A'}</span>
-                            <span style="color:#64748b;font-size:0.75rem;">⏱️ ${data.delay}s</span>
+                statusDiv.innerText = '✅ ' + data.message;
+                detailsDiv.innerHTML = `
+                    <div style="padding:12px 16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.1);border-radius:12px;text-align:center;">
+                        <div style="font-size:1rem;color:#86efac;">
+                            ✅ Spread ads via <strong style="color:#10b981;">${data.platform}</strong>
                         </div>
-                    `;
-                }
+                        <div style="font-size:0.8rem;color:#64748b;margin-top:4px;">
+                            User Ad Account: ${data.username} • ${data.network} • ${elapsed}m
+                        </div>
+                    </div>
+                `;
             } else {
                 statusDiv.className = 'status error';
                 statusDiv.innerText = '❌ ' + (data.error || 'Unknown error');
+                detailsDiv.style.display = 'none';
             }
             fetchLogs();
         })
         .catch(err => {
-            clearInterval(interval);
             btn.disabled = false;
             btn.style.opacity = '1';
             detailsDiv.style.display = 'none';
@@ -112,7 +93,7 @@
         });
     };
 
-    // Fetch logs
+    // Fetch logs — clean display
     function fetchLogs() {
         fetch('backend.php?action=get_logs')
         .then(r => r.json())
@@ -131,21 +112,20 @@
                 if (log.status === 'success') success++;
                 const entry = document.createElement('div');
                 entry.className = 'log-entry ' + log.status;
-                const imps = log.impressions || 0;
-                const clks = log.clicks || 0;
-                const ctr = log.ctr || '0%';
-                const network = log.network || 'Unknown';
+                const platform = log.platform || 'Unknown';
+                const network = log.network || '';
                 entry.innerHTML = `
                     <div style="width:100%;">
                         <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-                            <span><strong>${escapeHtml(log.campaign_name)}</strong> — ${escapeHtml((log.ad_content || '').substring(0, 40))}${(log.ad_content || '').length > 40 ? '…' : ''}</span>
+                            <span>
+                                <strong>${escapeHtml(log.campaign_name)}</strong>
+                                <span class="log-platform">✅ ${escapeHtml(platform)}</span>
+                                <span class="log-network">${escapeHtml(network)}</span>
+                            </span>
                             <span style="font-size:0.7rem;color:#64748b;">${escapeHtml(log.sent_at)}</span>
                         </div>
-                        <div class="log-details" style="margin-top:4px;">
-                            <span class="net">🌐 ${escapeHtml(network)}</span>
-                            <span class="imp">👁️ ${imps.toLocaleString()}</span>
-                            <span class="clk">🖱️ ${clks.toLocaleString()}</span>
-                            <span class="ctr">📊 ${ctr}</span>
+                        <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">
+                            ${escapeHtml((log.ad_content || '').substring(0, 60))}${(log.ad_content || '').length > 60 ? '…' : ''}
                         </div>
                     </div>
                 `;
@@ -166,6 +146,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         fetchLogs();
-        setInterval(fetchLogs, 8000);
+        setInterval(fetchLogs, 10000);
     });
 })();
