@@ -1,5 +1,5 @@
 <?php
-// config.php — Unlimited credits, SQLite
+// config.php — SQLite, no credits
 session_start();
 
 define('DB_PATH', __DIR__ . '/database.sqlite');
@@ -33,11 +33,9 @@ $db->exec("CREATE TABLE IF NOT EXISTS logs (
     user_id INTEGER,
     campaign_name TEXT,
     ad_content TEXT,
+    image_path TEXT,
     target_url TEXT,
-    network TEXT,
-    impressions INTEGER DEFAULT 0,
-    clicks INTEGER DEFAULT 0,
-    ctr TEXT,
+    platform TEXT,
     status TEXT,
     response TEXT,
     sent_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -50,10 +48,8 @@ if ($stmt->fetchColumn() == 0) {
     $db->exec("INSERT INTO users (username, password_hash, is_admin) VALUES ('admin', '$default_pass', 1)");
 }
 
-// License key
 define('VALID_LICENSE', 'AIO-A0J8-OHA1-WLP3');
 
-// Session
 ini_set('session.gc_maxlifetime', 86400);
 session_set_cookie_params(86400);
 ?>
