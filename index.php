@@ -2,12 +2,6 @@
 require_once 'auth.php';
 requireLogin();
 
-if (isset($_GET['logout'])) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
-}
-
 $user_id = $_SESSION['user_id'];
 $stmt = $db->prepare("SELECT username, telegram_connected, platform, platform_username FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
@@ -19,8 +13,8 @@ $user = $stmt->fetch();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZerPes · Ads Spreader</title>
-    <link rel="stylesheet" href="public/style.css">
-    <script src="public/script.js" defer></script>
+    <link rel="stylesheet" href="/public/style.css">
+    <script src="/public/script.js" defer></script>
     <style>
         .credit-badge {
             background: linear-gradient(135deg, #10b981, #059669);
@@ -131,10 +125,6 @@ $user = $stmt->fetch();
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        .status-message {
-            font-size: 1rem;
-            color: #c084fc;
         }
         .log-platform {
             color: #10b981;
@@ -278,9 +268,9 @@ $user = $stmt->fetch();
                 <span class="user-badge">👤 <?= htmlspecialchars($_SESSION['username']) ?></span>
                 <span class="profile-toggle" onclick="openProfile()">⚙️ Profile</span>
                 <?php if ($_SESSION['is_admin']): ?>
-                    <a href="admin.php" class="admin-link">⚙️ Admin</a>
+                    <a href="/admin" class="admin-link">⚙️ Admin</a>
                 <?php endif; ?>
-                <a href="?logout" class="logout-link">Logout</a>
+                <a href="/logout" class="logout-link">Logout</a>
             </div>
         </header>
 
@@ -346,7 +336,7 @@ $user = $stmt->fetch();
             </div>
         </section>
 
-        <footer class="footer">ZerPes · v2.2 · Clean Platform Spreader</footer>
+        <footer class="footer">ZerPes · v2.3 · Clean Platform Spreader</footer>
     </div>
 
     <!-- Profile Modal -->
@@ -367,7 +357,7 @@ $user = $stmt->fetch();
         const license = document.getElementById('licenseKey').value.trim();
         const display = document.getElementById('platformDisplay');
 
-        fetch('backend.php', {
+        fetch('/backend', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'action=verify_license&license=' + encodeURIComponent(license)
@@ -404,7 +394,7 @@ $user = $stmt->fetch();
         statusDiv.innerHTML = '⏳ Connecting...';
         statusDiv.style.color = '#c084fc';
 
-        fetch('backend.php', {
+        fetch('/backend', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'action=connect_telegram&bot_token=' + encodeURIComponent(botToken) + '&chat_id=' + encodeURIComponent(chatId)
@@ -426,7 +416,6 @@ $user = $stmt->fetch();
         });
     }
 
-    // Profile functions
     function openProfile() {
         document.getElementById('profileModal').classList.add('active');
         document.getElementById('pwdStatus').style.display = 'none';
@@ -476,7 +465,7 @@ $user = $stmt->fetch();
         formData.append('old_password', oldPwd);
         formData.append('new_password', newPwd);
 
-        fetch('backend.php', { method: 'POST', body: formData })
+        fetch('/backend', { method: 'POST', body: formData })
         .then(r => r.json())
         .then(data => {
             if (data.status === 'success') {
