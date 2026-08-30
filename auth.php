@@ -1,5 +1,5 @@
 <?php
-// auth.php — authentication middleware
+// auth.php — Authentication middleware
 require_once 'config.php';
 
 function isLoggedIn() {
@@ -12,7 +12,7 @@ function isAdmin() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: login.php');
+        header('Location: /login');
         exit;
     }
 }
@@ -27,7 +27,7 @@ function requireAdmin() {
 
 function redirectIfLoggedIn() {
     if (isLoggedIn()) {
-        header('Location: index.php');
+        header('Location: /dashboard');
         exit;
     }
 }
