@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = (int)$user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['is_admin'] = (int)$user['is_admin'];
-                header('Location: index.php');
+                header('Location: /dashboard');
                 exit;
             } else {
                 $error = '❌ Invalid credentials.';
@@ -66,13 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" action="/login">
             <input type="text" name="username" placeholder="Username" value="<?= htmlspecialchars($username) ?>" required autofocus>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">🚀 Enter</button>
         </form>
 
-        <div class="brand-foot">ZerPes · v2.0</div>
+        <div class="brand-foot">ZerPes · v2.3</div>
     </div>
 </body>
 </html>
