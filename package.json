@@ -1,12 +1,8 @@
 {
   "name": "zerpes-ads-spreader",
   "version": "1.0.0",
-  "description": "ZerPes Ads Spreader — Zernio API + PostgreSQL",
-  "main": "index.php",
+  "description": "ZerPes Ads Spreader",
   "scripts": {
     "start": "php -S 0.0.0.0:${PORT:-8080} -t ."
-  },
-  "keywords": ["ads", "zernio", "spreader", "php", "postgresql"],
-  "author": "ZerPes",
-  "license": "MIT"
+  }
 }
