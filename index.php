@@ -43,13 +43,6 @@ $user = $stmt->fetch();
             background: rgba(239, 68, 68, 0.15);
             color: #fca5a5;
         }
-        .platform-badge {
-            background: rgba(168, 85, 247, 0.15);
-            color: #c084fc;
-            padding: 2px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-        }
         .license-section {
             display: flex;
             gap: 12px;
@@ -90,6 +83,10 @@ $user = $stmt->fetch();
             margin-top: 10px;
             font-size: 0.95rem;
         }
+        .platform-active {
+            border-left-color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.06) !important;
+        }
         .telegram-section {
             display: flex;
             gap: 12px;
@@ -114,28 +111,42 @@ $user = $stmt->fetch();
             font-weight: 700;
             cursor: pointer;
         }
-        .log-details {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .log-details span {
-            background: rgba(255,255,255,0.04);
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-        .log-details .imp { color: #f59e0b; }
-        .log-details .clk { color: #3b82f6; }
-        .log-details .ctr { color: #10b981; }
-        .log-details .net { color: #c084fc; }
         .processing-status {
-            animation: pulse 1.5s ease-in-out infinite;
+            padding: 16px;
+            text-align: center;
+            background: rgba(168, 85, 247, 0.06);
+            border-radius: 12px;
+            border: 1px solid rgba(168, 85, 247, 0.1);
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        .processing-status .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(168, 85, 247, 0.1);
+            border-top: 3px solid #a855f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 12px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status-message {
+            font-size: 1rem;
+            color: #c084fc;
+        }
+        .platform-badge {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .log-platform {
+            color: #10b981;
+            font-weight: 500;
+        }
+        .log-network {
+            color: #64748b;
+            font-size: 0.75rem;
         }
     </style>
 </head>
@@ -187,9 +198,9 @@ $user = $stmt->fetch();
             <input type="text" id="campaign" placeholder="Campaign Name" value="ZerPes #<?= rand(100, 999) ?>">
             <textarea id="ad_content" placeholder="Your ad copy here... 💥"></textarea>
             <input type="url" id="target_url" placeholder="Target URL (e.g., https://your.site)">
-            <button id="fireBtn" onclick="sendAd()">🚀 Spread to Networks</button>
+            <button id="fireBtn" onclick="sendAd()">🚀 Spread Ads</button>
             <div id="statusMsg" class="status"></div>
-            <div id="processingDetails" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:12px;font-size:0.9rem;color:#94a3b8;"></div>
+            <div id="processingDetails" style="display:none;margin-top:12px;"></div>
         </section>
 
         <!-- Stats -->
@@ -216,7 +227,7 @@ $user = $stmt->fetch();
             </div>
         </section>
 
-        <footer class="footer">ZerPes · v2.0 · Multi-Network Ads</footer>
+        <footer class="footer">ZerPes · v2.1 · Clean Platform Spreader</footer>
     </div>
 
     <script>
@@ -234,16 +245,16 @@ $user = $stmt->fetch();
             display.style.display = 'block';
             if (data.status === 'success') {
                 display.innerHTML = '✅ ' + data.message;
-                display.style.borderLeftColor = '#10b981';
+                display.className = 'platform-display platform-active';
             } else {
                 display.innerHTML = '❌ ' + data.error;
-                display.style.borderLeftColor = '#ef4444';
+                display.className = 'platform-display';
             }
         })
         .catch(err => {
             display.style.display = 'block';
             display.innerHTML = '⚠️ Error: ' + err.message;
-            display.style.borderLeftColor = '#ef4444';
+            display.className = 'platform-display';
         });
     }
 
