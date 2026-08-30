@@ -1,5 +1,5 @@
 <?php
-// backend.php — Fixed timeout, image upload, no stats
+// backend.php — Clean API handler
 header('Content-Type: application/json');
 require_once 'config.php';
 
@@ -10,7 +10,7 @@ ignore_user_abort(true);
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 // ============================================
-// SEND AD — Long processing with image support
+// SEND AD
 // ============================================
 if ($action === 'send_ad') {
     $user_id = $_SESSION['user_id'] ?? 0;
@@ -29,7 +29,7 @@ if ($action === 'send_ad') {
         $target_path = $upload_dir . $filename;
         
         if (move_uploaded_file($_FILES['ad_image']['tmp_name'], $target_path)) {
-            $image_path = 'uploads/' . $filename;
+            $image_path = '/uploads/' . $filename;
         }
     }
 
@@ -38,7 +38,6 @@ if ($action === 'send_ad') {
         exit;
     }
 
-    // Get user platform
     $stmt = $db->prepare("SELECT platform, platform_username FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch();
@@ -46,19 +45,12 @@ if ($action === 'send_ad') {
     $platform = $user['platform'] ?? 'Instagram';
     $username = $user['platform_username'] ?? '@asiwajuwon';
 
-    // Ad networks (NO REDDIT)
-    $networks = [
-        'Google Ads', 'Meta Ads', 'TikTok Ads', 'Twitter Ads',
-        'LinkedIn Ads', 'Snapchat Ads', 'Pinterest Ads',
-        'Taboola', 'Outbrain'
-    ];
+    $networks = ['Google Ads', 'Meta Ads', 'TikTok Ads', 'Twitter Ads', 'LinkedIn Ads', 'Snapchat Ads', 'Pinterest Ads', 'Taboola', 'Outbrain'];
     $network = $networks[array_rand($networks)];
 
-    // Random delay: 30-120 seconds (works without timeout)
     $delay = rand(30, 120);
     sleep($delay);
 
-    // Build response
     $response_data = [
         'platform' => $platform,
         'username' => $username,
@@ -71,11 +63,10 @@ if ($action === 'send_ad') {
     $status = 'success';
     $response_log = json_encode($response_data);
 
-    // Log to database
     $stmt = $db->prepare("INSERT INTO logs (user_id, campaign_name, ad_content, image_path, target_url, platform, status, response) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([$user_id, $campaign, $content, $image_path, $target, $platform, $status, $response_log]);
 
-    // Send Telegram
+    // Telegram
     $stmt = $db->prepare("SELECT telegram_bot_token, telegram_chat_id FROM users WHERE id = ? AND telegram_connected = 1");
     $stmt->execute([$user_id]);
     $telegram_user = $stmt->fetch();
