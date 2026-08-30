@@ -1,136 +1,142 @@
 <?php
-// admin.php — ZerPes user management (admin only)
 require_once 'auth.php';
 requireAdmin();
 
 $message = '';
 $message_type = '';
 
-// handle user creation
+// Create user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     $new_username = trim($_POST['new_username'] ?? '');
     $new_password = $_POST['new_password'] ?? '';
     $is_admin = isset($_POST['is_admin']) ? 1 : 0;
+    $credits = (int)($_POST['credits'] ?? 999999);
 
     if (empty($new_username) || empty($new_password)) {
-        $message = '❌ Username and password required, cunt.';
-        $message_type = 'error';
-    } elseif (strlen($new_password) < 6) {
-        $message = '❌ Password must be at least 6 characters.';
+        $message = '❌ Username and password required';
         $message_type = 'error';
     } else {
         try {
             $hash = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt = $db->prepare("INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, ?)");
-            $stmt->execute([$new_username, $hash, $is_admin]);
+            $stmt = $db->prepare("INSERT INTO users (username, password_hash, is_admin, credits) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$new_username, $hash, $is_admin, $credits]);
             $message = '✅ User created: ' . htmlspecialchars($new_username);
             $message_type = 'success';
         } catch (PDOException $e) {
-            if (strpos($e->getMessage(), 'unique') !== false) {
-                $message = '❌ Username "' . htmlspecialchars($new_username) . '" already exists.';
-            } else {
-                $message = '❌ Database error: ' . $e->getMessage();
-            }
+            $message = '❌ Username already exists';
             $message_type = 'error';
         }
     }
 }
 
-// handle user deletion
+// Delete user
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    if ($id === (int)$_SESSION['user_id']) {
-        $message = '❌ Cannot delete yourself, genius.';
-        $message_type = 'error';
+    if ($id !== (int)$_SESSION['user_id']) {
+        $db->exec("DELETE FROM users WHERE id = $id");
+        $message = '🗑️ User deleted.';
+        $message_type = 'success';
     } else {
-        try {
-            $db->exec("DELETE FROM users WHERE id = $id");
-            $message = '🗑️ User deleted.';
-            $message_type = 'success';
-        } catch (PDOException $e) {
-            $message = '❌ Delete failed: ' . $e->getMessage();
-            $message_type = 'error';
-        }
+        $message = '❌ Cannot delete yourself.';
+        $message_type = 'error';
     }
 }
 
-// fetch all users
+// Update credits
+if (isset($_POST['update_credits'])) {
+    $user_id = (int)$_POST['user_id'];
+    $credits = (int)$_POST['credits'];
+    $db->exec("UPDATE users SET credits = $credits WHERE id = $user_id");
+    $message = '✅ Credits updated.';
+    $message_type = 'success';
+}
+
 $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
-$user_count = count($users);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZerPes · Admin</title>
     <link rel="stylesheet" href="public/style.css">
     <style>
-        .admin-container {
-            max-width: 780px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .admin-header h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .admin-header .back-dash {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.9rem;
-            padding: 8px 18px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 40px;
-            transition: 0.25s;
-        }
-        .admin-header .back-dash:hover {
-            border-color: #a855f755;
-            color: #c084fc;
-        }
-        .form-grid {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 8px;
-        }
-        .form-grid input {
-            flex: 1;
-            min-width: 140px;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            color: #f0f4ff;
-            font-size: 0.95rem;
-        }
-        .form-grid input:focus {
-            outline: none;
-            border-color: #a855f7;
-        }
-        .form-grid .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #94a3b8;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        .form-grid .checkbox-label input {
-            width: auto;
-            min-width: unset;
-            flex: 0;
+        .admin-container { max-width: 850px; margin: 30px auto; padding: 0 20px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+        .admin-header h1 { font-size: 1.8rem; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .form-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .form-grid input { flex: 1; min-width: 120px; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #f0f4ff; }
+        .form-grid input:focus { outline: none; border-color: #a855f7; }
+        .form-grid button { background: linear-gradient(135deg, #a855f7, #d946ef); border: none; padding: 10px 24px; border-radius: 40px; color: #fff; font-weight: 700; cursor: pointer; }
+        .message-box { padding: 12px 18px; border-radius: 14px; margin-bottom: 16px; }
+        .message-box.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); color: #86efac; }
+        .message-box.error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); flex-wrap: wrap; gap: 8px; }
+        .user-row .badge { font-size: 0.65rem; padding: 2px 12px; border-radius: 40px; }
+        .user-row .badge.admin { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .user-row .badge.user { background: rgba(148,163,184,0.1); color: #94a3b8; }
+        .user-row .telegram-badge { font-size: 0.65rem; padding: 2px 10px; border-radius: 40px; }
+        .user-row .telegram-badge.connected { background: rgba(34,197,94,0.12); color: #86efac; }
+        .user-row .telegram-badge.disconnected { background: rgba(239,68,68,0.12); color: #fca5a5; }
+        .credit-edit { display: flex; gap: 8px; align-items: center; }
+        .credit-edit input { width: 80px; padding: 4px 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f0f4ff; }
+        .credit-edit button { background: #10b981; border: none; padding: 4px 12px; border-radius: 20px; color: #fff; cursor: pointer; font-size: 0.75rem; }
+        .delete-link { color: #ef4444; text-decoration: none; font-size: 0.8rem; }
+        .back-link { color: #94a3b8; text-decoration: none; }
+    </style>
+</head>
+<body style="background:radial-gradient(circle at 20% 30%, #0b0e1a, #03050b); min-height:100vh; padding:20px;">
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>🜁 ZerPes · Admin</h1>
+            <a href="index.php" class="back-link">← Back to Dashboard</a>
+        </div>
+
+        <div class="glass" style="padding:28px; border-radius:24px; margin-bottom:24px;">
+            <h3 style="margin-bottom:16px;">👤 Create New User</h3>
+            <?php if ($message): ?>
+                <div class="message-box <?= $message_type ?>"><?= $message ?></div>
+            <?php endif; ?>
+            <form method="POST" class="form-grid">
+                <input type="text" name="new_username" placeholder="Username" required>
+                <input type="text" name="new_password" placeholder="Password" required>
+                <input type="number" name="credits" placeholder="Credits" value="999999">
+                <label style="color:#94a3b8;font-size:0.9rem;display:flex;align-items:center;gap:6px;">
+                    <input type="checkbox" name="is_admin"> Admin
+                </label>
+                <button type="submit" name="create_user">➕ Create</button>
+            </form>
+        </div>
+
+        <div class="glass" style="padding:28px; border-radius:24px;">
+            <h3 style="margin-bottom:16px;">📊 Users (<?= count($users) ?>)</h3>
+            <?php foreach ($users as $u): ?>
+                <div class="user-row">
+                    <span>
+                        <strong><?= htmlspecialchars($u['username']) ?></strong>
+                        <span class="badge <?= $u['is_admin'] ? 'admin' : 'user' ?>"><?= $u['is_admin'] ? 'ADMIN' : 'user' ?></span>
+                        <span class="telegram-badge <?= ($u['telegram_connected'] ?? 0) ? 'connected' : 'disconnected' ?>">
+                            <?= ($u['telegram_connected'] ?? 0) ? '📡 Bot' : '📡 No Bot' ?>
+                        </span>
+                        <?php if ($u['platform']): ?>
+                            <span style="color:#c084fc;font-size:0.7rem;">📱 <?= $u['platform'] ?> <?= $u['platform_username'] ?></span>
+                        <?php endif; ?>
+                    </span>
+                    <span style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                        <span style="color:#f59e0b;font-size:0.9rem;">⚡ <?= $u['credits'] ?? 0 ?></span>
+                        <form method="POST" class="credit-edit" style="display:inline-flex;">
+                            <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
+                            <input type="number" name="credits" value="<?= $u['credits'] ?? 0 ?>" min="0">
+                            <button type="submit" name="update_credits">Update</button>
+                        </form>
+                        <?php if ((int)$u['id'] !== (int)$_SESSION['user_id']): ?>
+                            <a href="?delete=<?= $u['id'] ?>" class="delete-link" onclick="return confirm('Delete?')">🗑️</a>
+                        <?php endif; ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</body>
+</html>            flex: 0;
         }
         .form-grid button {
             background: linear-gradient(135deg, #a855f7, #d946ef);
