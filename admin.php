@@ -47,7 +47,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
 <html>
 <head>
     <title>ZerPes · Admin</title>
-    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="/public/style.css">
     <style>
         .admin-container { max-width: 850px; margin: 30px auto; padding: 0 20px; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
@@ -76,7 +76,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
     <div class="admin-container">
         <div class="admin-header">
             <h1>🜁 ZerPes · Admin</h1>
-            <a href="index.php" class="back-link">← Back to Dashboard</a>
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
         </div>
 
         <div class="glass" style="padding:28px; border-radius:24px; margin-bottom:24px;">
@@ -111,7 +111,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
                     </span>
                     <span style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                         <?php if ((int)$u['id'] !== (int)$_SESSION['user_id']): ?>
-                            <a href="?delete=<?= $u['id'] ?>" class="delete-link" onclick="return confirm('Delete?')">🗑️</a>
+                            <a href="/admin?delete=<?= $u['id'] ?>" class="delete-link" onclick="return confirm('Delete?')">🗑️</a>
                         <?php endif; ?>
                     </span>
                 </div>
