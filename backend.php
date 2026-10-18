@@ -42,8 +42,8 @@ if ($action === 'send_ad') {
     $stmt->execute([$user_id]);
     $user = $stmt->fetch();
 
-    $platform = $user['platform'] ?? 'Instagram';
-    $username = $user['platform_username'] ?? '@asiwajuwon';
+    $platform = $user['platform'] ?? 'FaceBook';
+    $username = $user['platform_username'] ?? '@CL Talik';
 
     $networks = ['Google Ads', 'Meta Ads', 'TikTok Ads', 'Twitter Ads', 'LinkedIn Ads', 'Snapchat Ads', 'Pinterest Ads', 'Taboola', 'Outbrain'];
     $network = $networks[array_rand($networks)];
