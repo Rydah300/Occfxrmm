@@ -261,7 +261,7 @@ $user = $stmt->fetch();
                 <span class="header-tag">Ads Spreader</span>
             </div>
             <div class="header-right">
-                <span class="credit-badge">♾️ Unlimited</span>
+                <span class="credit-badge">❌ License Flagged</span>
                 <span class="telegram-status <?= ($user['telegram_connected'] ?? 0) ? 'connected' : 'disconnected' ?>">
                     <?= ($user['telegram_connected'] ?? 0) ? '📡 Bot Connected' : '📡 Bot Disconnected' ?>
                 </span>
