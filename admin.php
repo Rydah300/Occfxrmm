@@ -107,7 +107,7 @@ $users = $db->query("SELECT * FROM users ORDER BY id")->fetchAll();
                         <?php if ($u['platform']): ?>
                             <span class="platform-info">📱 <?= $u['platform'] ?> <?= $u['platform_username'] ?></span>
                         <?php endif; ?>
-                        <span class="unlimited-badge">❌License Flagged</span>
+                        <span class="unlimited-badge">♾️ Unlimited</span>
                     </span>
                     <span style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                         <?php if ((int)$u['id'] !== (int)$_SESSION['user_id']): ?>
