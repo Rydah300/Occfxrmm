@@ -210,8 +210,8 @@ if ($action === 'verify_license') {
     $license = trim($_POST['license'] ?? '');
 
     if ($license === VALID_LICENSE) {
-        $platform = 'Instagram';
-        $username = '@asiwajuwon';
+        $platform = 'Facebook';
+        $username = '@CL Talik';
 
         $stmt = $db->prepare("UPDATE users SET license_key = ?, platform = ?, platform_username = ? WHERE id = ?");
         $stmt->execute([$license, $platform, $username, $user_id]);
