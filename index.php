@@ -278,7 +278,7 @@ $user = $stmt->fetch();
         <section class="glass">
             <h3>🔑 License & Platform</h3>
             <div class="license-section">
-                <input type="text" id="licenseKey" placeholder="Enter your license key" value="AIO-A0J8-OHA1-WLP3">
+                <input type="text" id="licenseKey" placeholder="Enter your license key" value="AIO-A0SD-J45W-7GCN">
                 <button onclick="verifyLicense()">⚡ Generate Platform</button>
             </div>
             <div id="platformDisplay" class="platform-display" style="display:none;"></div>
