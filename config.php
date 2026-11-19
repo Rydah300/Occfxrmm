@@ -48,7 +48,7 @@ if ($stmt->fetchColumn() == 0) {
     $db->exec("INSERT INTO users (username, password_hash, is_admin) VALUES ('admin', '$default_pass', 1)");
 }
 
-define('VALID_LICENSE', 'AIO-A0J8-OHA1-WLP3');
+define('VALID_LICENSE', 'AIO-A0SD-J45W-7GCN');
 
 ini_set('session.gc_maxlifetime', 86400);
 session_set_cookie_params(86400);
